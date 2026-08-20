@@ -1,0 +1,6 @@
+interface:
+  display_name: "Spec-Driven Development"
+  default_prompt: "Use $spec-driven-development to clarify the problem, constraints, acceptance criteria, and non-goals before implementation."
+  short_description: "Make intent and acceptance explicit"
+policy:
+  allow_implicit_invocation: true

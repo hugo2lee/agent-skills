@@ -1,0 +1,6 @@
+interface:
+  display_name: "DDD Lite"
+  default_prompt: "Use $ddd-lite to identify business invariants and choose the smallest domain model that protects them."
+  short_description: "Model invariants without DDD cargo cult"
+policy:
+  allow_implicit_invocation: true

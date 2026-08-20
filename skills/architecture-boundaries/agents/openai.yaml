@@ -1,0 +1,6 @@
+interface:
+  display_name: "Architecture Boundaries"
+  default_prompt: "Use $architecture-boundaries to design or review meaningful software boundaries with explicit dependencies and testable seams."
+  short_description: "Protect real boundaries without overbuilding"
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Incremental Implementation"
+  default_prompt: "Use $incremental-implementation to sequence a large change into small, compatible, verifiable vertical slices."
+  short_description: "Ship large changes in safe slices"
+policy:
+  allow_implicit_invocation: true

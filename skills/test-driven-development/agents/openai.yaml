@@ -1,0 +1,6 @@
+interface:
+  display_name: "Test-Driven Development"
+  default_prompt: "Use $test-driven-development to implement one observable behavior through a Red-Green-Refactor loop."
+  short_description: "Build behavior through fast feedback"
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Systematic Debugging"
+  default_prompt: "Use $systematic-debugging to reproduce a failure, test hypotheses, make the smallest fix, and verify the regression."
+  short_description: "Replace guesses with evidence"
+policy:
+  allow_implicit_invocation: true

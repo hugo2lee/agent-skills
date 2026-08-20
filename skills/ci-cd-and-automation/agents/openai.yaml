@@ -1,0 +1,6 @@
+interface:
+  display_name: "CI/CD and Automation"
+  default_prompt: "Use $ci-cd-and-automation to design or review proportional build, test, release, and deployment verification gates."
+  short_description: "Make delivery gates useful"
+policy:
+  allow_implicit_invocation: true

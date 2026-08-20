@@ -1,0 +1,6 @@
+interface:
+  display_name: "Git Workflow and Versioning"
+  default_prompt: "Use $git-workflow-and-versioning to prepare scoped commits, version changes, and a meaningful changelog entry."
+  short_description: "Keep history safe and explainable"
+policy:
+  allow_implicit_invocation: true
