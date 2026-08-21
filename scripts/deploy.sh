@@ -5,9 +5,9 @@ ROOT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd -P)"
 SOURCE_DIR="$ROOT_DIR/skills"
 USER_DIR="${HOME:?HOME must be set}"
 
-CLINE_ROOT="${AGENT_SKILLS_CLINE_ROOT:-$USER_DIR/.cline/skills}"
+CLINE_ROOT="${AGENT_SKILLS_CLINE_ROOT:-$USER_DIR/.agents/skills}"
 CODEX_ROOT="${AGENT_SKILLS_CODEX_ROOT:-$USER_DIR/.codex/skills}"
-OPENCLAW_ROOT="${AGENT_SKILLS_OPENCLAW_ROOT:-$USER_DIR/.agents/skills}"
+OPENCLAW_ROOT="${AGENT_SKILLS_OPENCLAW_ROOT:-$USER_DIR/.openclaw/skills}"
 
 DRY_RUN=false
 FORCE=false
@@ -29,12 +29,14 @@ SKILLS=(
 usage() {
   cat <<'USAGE'
 Usage:
-  scripts/deploy.sh [--dry-run] [--force]
-  scripts/deploy.sh with optional --cline-root DIR --codex-root DIR --openclaw-root DIR
+  scripts/deploy.sh [--dry-run] [--force] \
+    [--cline-root DIR] [--codex-root DIR] [--openclaw-root DIR]
 
 The default operation copies all managed Skills. --dry-run previews changes.
 --force allows taking over an existing same-named directory without the
-managed marker.
+managed marker. The default roots follow the npx skills agent locations;
+use the root flags or AGENT_SKILLS_*_ROOT environment variables to preserve
+an existing personal layout.
 USAGE
 }
 

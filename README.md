@@ -24,6 +24,47 @@
 
 首版只提供 Go 代码示例和语言落地参考，不包含 C++ Skill。
 
+## 使用 npx skills 安装
+
+本仓库不需要发布 npm 包。npx skills 会直接从 GitHub 仓库发现
+skills/<skill-name>/SKILL.md，并使用每个 Skill 的 frontmatter 和描述完成安装。
+
+查看所有 Skill：
+
+~~~sh
+npx skills add hugo2lee/agent-skills --list
+~~~
+
+安装全部 Skill：
+
+~~~sh
+npx skills add hugo2lee/agent-skills --skill '*'
+~~~
+
+只安装 architecture-boundaries：
+
+~~~sh
+npx skills add hugo2lee/agent-skills \
+  --skill architecture-boundaries
+~~~
+
+全局安装到 Codex、Cline 和 OpenClaw：
+
+~~~sh
+npx skills add hugo2lee/agent-skills \
+  --skill '*' \
+  --global \
+  --agent codex \
+  --agent cline \
+  --agent openclaw \
+  --yes
+~~~
+
+安装后可以使用 npx skills ls 查看已安装 Skill，使用
+npx skills update 更新到仓库中的最新版本。Codex 中可以通过
+$architecture-boundaries 这样的显式调用名使用 Skill；其他 Agent 可以根据
+Skill 的 description 自动触发。
+
 ## 设计原则
 
 > Prefer the simplest architecture that preserves meaningful boundaries.
@@ -48,11 +89,15 @@ scripts/deploy.sh
 
 deploy.sh 默认复制到：
 
-- ~/.cline/skills/
 - ~/.codex/skills/
 - ~/.agents/skills/
+- ~/.openclaw/skills/
 
-它只管理本仓库的 11 个 Skill，不会修改其他 Skill，也不会修改 ~/.codex/skills/.system。
+这些路径与 npx skills 的全局 Agent 目录保持一致。deploy.sh 是可选的、可审计的
+直接复制方式，只管理本仓库的 11 个 Skill，不会修改其他 Skill，也不会修改
+~/.codex/skills/.system。它保留 --cline-root、--codex-root、--openclaw-root
+参数以及对应的 AGENT_SKILLS_*_ROOT 环境变量；如果个人环境仍使用旧的
+~/.cline/skills，可以显式传入 --cline-root "$HOME/.cline/skills"，不会破坏现有布局。
 
 ## 维护方式
 
