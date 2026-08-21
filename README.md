@@ -215,6 +215,24 @@ GitHub Actions 在 push 和 pull_request 上自动执行 validation、shellcheck
 
 维护者发布步骤见 docs/release-checklist.md。版本变更见 CHANGELOG.md，参考来源和许可证边界见 ATTRIBUTION.md。
 
+### Automated GitHub Release
+
+推送符合 `vMAJOR.MINOR.PATCH` 格式的 Tag 后，GitHub Actions 会自动执行发布流程：
+
+1. 在该 Tag 对应的提交上运行全部 validation、ShellCheck 和 npx smoke test；
+2. 只有 `validate` job 成功时，才运行 `Publish GitHub Release` job；
+3. 使用 GitHub 内置 `GITHUB_TOKEN` 验证远端 Tag 并创建正式 GitHub Release；
+4. 使用 GitHub 自动生成 release notes，并将该版本标记为 latest。
+
+因此，维护者只需要创建并推送一个 annotated Tag：
+
+~~~sh
+git tag -a v0.2.1 <release-commit> -m "v0.2.1 — CI-gated automated release"
+git push origin v0.2.1
+~~~
+
+不需要手动打开 GitHub Release 页面，也不需要个人 access token。`v0.2.0` Tag 在自动发布 workflow 加入之前已经存在，因此不会被历史性重放；自动发布从后续符合格式的新 Tag 开始生效。若 job 报告 `Resource not accessible by integration`，在仓库的 Settings → Actions → General → Workflow permissions 中允许 workflow 使用 read and write permissions，然后重新推送一个新的版本 Tag。
+
 ## Design Principle
 
 > Prefer the simplest architecture that preserves meaningful boundaries.

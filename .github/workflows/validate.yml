@@ -38,3 +38,33 @@ jobs:
 
       - name: Run npx discovery and installation smoke test
         run: scripts/smoke-test-npx.sh
+
+  release:
+    name: Publish GitHub Release
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Publish release from verified tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          if [[ ! "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            printf 'ERROR: refusing to publish non-semver stable tag: %s\n' "$TAG_NAME" >&2
+            exit 1
+          fi
+
+          if gh release view "$TAG_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            printf 'Release already exists for %s; leaving it unchanged.\n' "$TAG_NAME"
+            exit 0
+          fi
+
+          gh release create "$TAG_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --title "$TAG_NAME" \
+            --generate-notes \
+            --latest

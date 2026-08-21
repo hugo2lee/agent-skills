@@ -30,10 +30,11 @@ Use this checklist for a versioned Skill Suite release. The repository is distri
 
 ## GitHub Release
 
-- [ ] Create a GitHub Release from the exact tag.
-- [ ] Use the matching version as the release title, for example `v0.2.0 — Reliable Routing & Distribution`.
-- [ ] Summarize routing boundaries, validation, CI, distribution, and known limitations without claiming unverified agent behavior.
-- [ ] Link to the installation command and the relevant changelog section.
+- [ ] Confirm the tag matches `vMAJOR.MINOR.PATCH`; pushing it starts the release workflow.
+- [ ] Confirm the tag's `validate` job passes all Skill validation, ShellCheck, and npx smoke checks.
+- [ ] Confirm the dependent `Publish GitHub Release` job creates a non-draft latest release from the same tag.
+- [ ] Confirm GitHub-generated notes contain the intended user-visible changes and known limitations.
+- [ ] If the release job lacks `contents: write`, update the repository Actions workflow permissions and use a new tag; do not reuse or move an existing published tag.
 
 ## After release
 

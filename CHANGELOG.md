@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Added CI-gated automatic GitHub Release publishing for future stable `vMAJOR.MINOR.PATCH` tags using the repository's built-in `GITHUB_TOKEN` and generated release notes.
+
 ## v0.2.0 - Reliable Routing & Distribution
 
 ### Added
