@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-ROOT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd -P)"
+ROOT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd -P)"
 SOURCE_DIR="$ROOT_DIR/skills"
 USER_DIR="${HOME:?HOME must be set}"
 
@@ -87,7 +87,7 @@ if ! command -v rsync >/dev/null 2>&1; then
   exit 1
 fi
 
-canonical_root="$(CDPATH= cd -- "$ROOT_DIR" && pwd -P)"
+canonical_root="$(CDPATH='' cd -- "$ROOT_DIR" && pwd -P)"
 targets=()
 for candidate in "$CLINE_ROOT" "$CODEX_ROOT" "$OPENCLAW_ROOT"; do
   duplicate=false
