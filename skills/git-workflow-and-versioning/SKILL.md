@@ -1,9 +1,9 @@
 ---
 name: git-workflow-and-versioning
-description: Keep engineering history safe and explainable through scoped branches, atomic commits, meaningful versions, and changelog entries that record behavior and reasons.
+description: Manage engineering history and versioned delivery through scoped branches, atomic commits, meaningful commit messages, tags, changelog entries, and safe Git operations. Do not use it for CI pipeline design or code correctness review.
 license: AGPL-3.0-only
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: "delivery"
 ---
 

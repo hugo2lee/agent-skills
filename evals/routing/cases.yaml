@@ -1,0 +1,350 @@
+# Routing cases are discovery tests, not expected prose answers.
+# language is deliberately explicit so the repository validator can enforce the
+# v0.2.0 distribution: at least 12 Chinese, 12 English, and 6 mixed cases.
+- id: ROUTE-ZH-001
+  language: zh
+  prompt: >
+    这个 Go service 直接创建 postgres client，repository 需要加 interface 吗？
+  expected_primary:
+    - architecture-boundaries
+  allowed_secondary: []
+  forbidden:
+    - ddd-lite
+    - planning-and-task-breakdown
+
+- id: ROUTE-ZH-002
+  language: zh
+  prompt: >
+    订单只有在草稿状态且总金额大于零时才能确认，这条状态规则应该放在哪里？
+  expected_primary:
+    - ddd-lite
+  allowed_secondary: []
+  forbidden:
+    - architecture-boundaries
+    - ci-cd-and-automation
+
+- id: ROUTE-ZH-003
+  language: zh
+  prompt: >
+    Checkout 在增加 retry 之后开始 timeout，先帮我定位根因，不要随机改参数。
+  expected_primary:
+    - systematic-debugging
+  allowed_secondary: []
+  forbidden:
+    - architecture-boundaries
+    - planning-and-task-breakdown
+
+- id: ROUTE-ZH-004
+  language: zh
+  prompt: >
+    产品只说“把通知做得更好”，请先帮我澄清用户、触发条件、验收标准和非目标。
+  expected_primary:
+    - spec-driven-development
+  allowed_secondary: []
+  forbidden:
+    - planning-and-task-breakdown
+    - test-driven-development
+
+- id: ROUTE-ZH-005
+  language: zh
+  prompt: >
+    需求已经明确，但要同时改 API、存储、测试和 pipeline，而且存在依赖，请先拆任务。
+  expected_primary:
+    - planning-and-task-breakdown
+  allowed_secondary: []
+  forbidden:
+    - spec-driven-development
+    - incremental-implementation
+
+- id: ROUTE-ZH-006
+  language: zh
+  prompt: >
+    现在要把旧存储迁移到新存储，旧调用方还在运行，应该如何用 vertical slice 安全推进？
+  expected_primary:
+    - incremental-implementation
+  allowed_secondary:
+    - test-driven-development
+  forbidden:
+    - planning-and-task-breakdown
+    - ci-cd-and-automation
+
+- id: ROUTE-ZH-007
+  language: zh
+  prompt: >
+    新增一个禁止空订单提交的行为，请先写一个失败的行为测试，再做最小实现。
+  expected_primary:
+    - test-driven-development
+  allowed_secondary: []
+  forbidden:
+    - code-review-and-quality
+    - systematic-debugging
+
+- id: ROUTE-ZH-008
+  language: zh
+  prompt: >
+    请帮我 review 这个 MR 的行为正确性、边界、回归风险和验证证据。
+  expected_primary:
+    - code-review-and-quality
+  allowed_secondary: []
+  forbidden:
+    - systematic-debugging
+    - git-workflow-and-versioning
+
+- id: ROUTE-ZH-009
+  language: zh
+  prompt: >
+    这个改动已经完成，接下来如何保持 branch、atomic commit、tag 和 CHANGELOG 清晰？
+  expected_primary:
+    - git-workflow-and-versioning
+  allowed_secondary: []
+  forbidden:
+    - ci-cd-and-automation
+    - architecture-boundaries
+
+- id: ROUTE-ZH-010
+  language: zh
+  prompt: >
+    这个 GitLab pipeline 应该在哪一步阻止合并，并如何保留失败证据？
+  expected_primary:
+    - ci-cd-and-automation
+  allowed_secondary: []
+  forbidden:
+    - git-workflow-and-versioning
+    - code-review-and-quality
+
+- id: ROUTE-ZH-011
+  language: zh
+  prompt: >
+    一个简单后台 CRUD 页面只改一个列表文案，没有领域规则，也不需要设计讨论。
+  expected_primary: []
+  allowed_secondary: []
+  forbidden:
+    - ddd-lite
+    - planning-and-task-breakdown
+    - test-driven-development
+
+- id: ROUTE-ZH-012
+  language: zh
+  prompt: >
+    retry 修改后测试 timeout 了，这个 bug 先别改，请先收集复现证据和可证伪假设。
+  expected_primary:
+    - systematic-debugging
+  allowed_secondary: []
+  forbidden:
+    - architecture-boundaries
+    - incremental-implementation
+
+- id: ROUTE-EN-013
+  language: en
+  prompt: >
+    An HTTP handler calls one concrete application service. Should I add an interface
+    just because the type is named Service?
+  expected_primary:
+    - architecture-boundaries
+  allowed_secondary: []
+  forbidden:
+    - ddd-lite
+    - planning-and-task-breakdown
+
+- id: ROUTE-EN-014
+  language: en
+  prompt: >
+    An order can be confirmed only while it is a draft and its total is positive.
+    Where should this business invariant live?
+  expected_primary:
+    - ddd-lite
+  allowed_secondary: []
+  forbidden:
+    - architecture-boundaries
+    - ci-cd-and-automation
+
+- id: ROUTE-EN-015
+  language: en
+  prompt: >
+    Checkout started timing out after a retry change. Reproduce the failure and find
+    the smallest evidence-based fix before redesigning anything.
+  expected_primary:
+    - systematic-debugging
+  allowed_secondary: []
+  forbidden:
+    - architecture-boundaries
+    - incremental-implementation
+
+- id: ROUTE-EN-016
+  language: en
+  prompt: >
+    The request says “improve notifications” but gives no audience, trigger, success
+    measure, or non-goals. Clarify the specification first.
+  expected_primary:
+    - spec-driven-development
+  allowed_secondary: []
+  forbidden:
+    - planning-and-task-breakdown
+    - test-driven-development
+
+- id: ROUTE-EN-017
+  language: en
+  prompt: >
+    The feature is clearly defined but changes an API, domain rule, persistence layer,
+    tests, and CI with dependencies. Break it into bounded executable tasks.
+  expected_primary:
+    - planning-and-task-breakdown
+  allowed_secondary: []
+  forbidden:
+    - spec-driven-development
+    - incremental-implementation
+
+- id: ROUTE-EN-018
+  language: en
+  prompt: >
+    Migrate storage while old callers remain live. Design compatible vertical slices,
+    safety nets, and removal conditions.
+  expected_primary:
+    - incremental-implementation
+  allowed_secondary:
+    - test-driven-development
+  forbidden:
+    - planning-and-task-breakdown
+    - ci-cd-and-automation
+
+- id: ROUTE-EN-019
+  language: en
+  prompt: >
+    Add behavior that rejects an empty order. Start with one failing behavior test,
+    implement the minimum, then refactor while green.
+  expected_primary:
+    - test-driven-development
+  allowed_secondary: []
+  forbidden:
+    - code-review-and-quality
+    - systematic-debugging
+
+- id: ROUTE-EN-020
+  language: en
+  prompt: >
+    Review this merge request diff for a race that can duplicate a user-visible action,
+    including severity, impact, location, and evidence.
+  expected_primary:
+    - code-review-and-quality
+  allowed_secondary: []
+  forbidden:
+    - systematic-debugging
+    - git-workflow-and-versioning
+
+- id: ROUTE-EN-021
+  language: en
+  prompt: >
+    Prepare a scoped branch, atomic commits, a version tag, and a changelog entry for
+    this completed release.
+  expected_primary:
+    - git-workflow-and-versioning
+  allowed_secondary: []
+  forbidden:
+    - ci-cd-and-automation
+    - architecture-boundaries
+
+- id: ROUTE-EN-022
+  language: en
+  prompt: >
+    Decide where a CI pipeline should gate formatting, unit tests, integration tests,
+    artifact identity, deployment health, and rollback.
+  expected_primary:
+    - ci-cd-and-automation
+  allowed_secondary: []
+  forbidden:
+    - git-workflow-and-versioning
+    - code-review-and-quality
+
+- id: ROUTE-EN-023
+  language: en
+  prompt: >
+    A simple admin CRUD screen has no business invariants and only needs a list filter.
+    Should the task automatically introduce aggregates and domain events?
+  expected_primary: []
+  allowed_secondary: []
+  forbidden:
+    - ddd-lite
+    - architecture-boundaries
+    - planning-and-task-breakdown
+
+- id: ROUTE-EN-024
+  language: en
+  prompt: >
+    A pipeline began failing with a timeout after a dependency update. Investigate the
+    reproducible failure and preserve diagnostic evidence before changing the pipeline.
+  expected_primary:
+    - systematic-debugging
+  allowed_secondary:
+    - ci-cd-and-automation
+  forbidden:
+    - architecture-boundaries
+    - planning-and-task-breakdown
+
+- id: ROUTE-MIX-025
+  language: mixed
+  prompt: >
+    这个 service 要不要抽 interface for a local formatter，还是 concrete type 就够了？
+  expected_primary:
+    - architecture-boundaries
+  allowed_secondary: []
+  forbidden:
+    - ddd-lite
+    - test-driven-development
+
+- id: ROUTE-MIX-026
+  language: mixed
+  prompt: >
+    订单状态规则应该放 aggregate 还是 application service？Please decide the invariant owner。
+  expected_primary:
+    - ddd-lite
+  allowed_secondary: []
+  forbidden:
+    - architecture-boundaries
+    - planning-and-task-breakdown
+
+- id: ROUTE-MIX-027
+  language: mixed
+  prompt: >
+    这个 bug 先别改，please collect logs, reproduce it, and write competing root-cause hypotheses。
+  expected_primary:
+    - systematic-debugging
+  allowed_secondary: []
+  forbidden:
+    - architecture-boundaries
+    - incremental-implementation
+
+- id: ROUTE-MIX-028
+  language: mixed
+  prompt: >
+    需求已经明确但跨三个 packages with dependencies，先帮我拆 task，再决定 slice 顺序。
+  expected_primary:
+    - planning-and-task-breakdown
+  allowed_secondary:
+    - incremental-implementation
+  forbidden:
+    - spec-driven-development
+    - test-driven-development
+
+- id: ROUTE-MIX-029
+  language: mixed
+  prompt: >
+    Implement this new behavior：先写一个 failing test，再做 minimal code，然后 refactor。
+  expected_primary:
+    - test-driven-development
+  allowed_secondary: []
+  forbidden:
+    - code-review-and-quality
+    - systematic-debugging
+
+- id: ROUTE-MIX-030
+  language: mixed
+  prompt: >
+    请 review 这个 MR 的 diff，then prepare the release tag and verify the CI gate。
+  expected_primary:
+    - code-review-and-quality
+  allowed_secondary:
+    - git-workflow-and-versioning
+    - ci-cd-and-automation
+  forbidden:
+    - systematic-debugging
+    - planning-and-task-breakdown

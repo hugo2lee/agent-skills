@@ -1,9 +1,9 @@
 ---
 name: ci-cd-and-automation
-description: Design and verify proportional CI/CD quality gates, builds, tests, release checks, and failure handling without confusing pipeline success with product correctness.
+description: Design or verify automated build, test, quality-gate, release, deployment, and post-deployment checks, including failure evidence and stop or rollback conditions. Do not use it for branch, commit, or tag history, or infer product correctness from a green pipeline alone.
 license: AGPL-3.0-only
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: "delivery"
 ---
 

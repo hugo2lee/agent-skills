@@ -1,9 +1,9 @@
 ---
 name: planning-and-task-breakdown
-description: Turn a clear engineering goal into bounded, ordered work with dependencies, risks, checkpoints, completion criteria, and proportional verification.
+description: Turn a clear, multi-step engineering goal into bounded tasks with dependencies, risks, checkpoints, completion criteria, and verification. Use when work is understood but complex or coordinated; not for unclear requirements, implementation sequencing details, or trivial edits.
 license: AGPL-3.0-only
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: "planning"
 ---
 

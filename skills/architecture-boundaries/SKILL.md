@@ -1,9 +1,9 @@
 ---
 name: architecture-boundaries
-description: Design and review meaningful software boundaries with pragmatic Ports and Adapters, dependency inversion, explicit dependency injection, testable seams, and conditional DDD; avoid mechanical interface proliferation.
+description: Decide whether a technical dependency boundary is meaningful and design Ports, Adapters, dependency inversion, explicit injection, and test seams. Use for DI, interfaces, package direction, infrastructure isolation, and protocol translation; not for primarily business invariants or active failure diagnosis.
 license: AGPL-3.0-only
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: "architecture"
 ---
 
@@ -72,7 +72,7 @@ Reject these unless there is unusually strong evidence:
 - a repository that exposes every table operation without domain meaning;
 - a giant service that owns every domain rule.
 
-Read [hexagonal.md](references/hexagonal.md) for port and adapter terminology, [testing-seams.md](references/testing-seams.md) for verification boundaries, and [languages/go.md](references/languages/go.md) for Go package and constructor guidance.
+Read [hexagonal.md](references/hexagonal.md) for port and adapter terminology, [testing-seams.md](references/testing-seams.md) for verification boundaries, [languages/go.md](references/languages/go.md) for Go package and constructor guidance, and [languages/cpp.md](references/languages/cpp.md) when applying the same decisions in C++.
 
 ## Verification
 

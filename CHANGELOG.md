@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.2.0 - Reliable Routing & Distribution
+
+### Added
+
+- Added an explicit-only `engineering-philosophy` governance and routing entrypoint.
+- Added discriminating discovery descriptions for all 11 Skills, with primary decision ownership and exclusions.
+- Added `skills/engineering-philosophy/references/routing-matrix.md` with primary, secondary, forbidden, and escalation guidance.
+- Added 30 machine-readable routing eval cases with 12 Chinese, 12 English, and 6 mixed-language prompts, including negative routing cases.
+- Added the C++ boundary realization reference under `architecture-boundaries` without creating a C++ top-level Skill.
+- Added a GitHub Actions validation workflow and an isolated `npx skills` discovery/installation smoke test.
+- Added a maintainer release checklist covering validation, versioning, tags, GitHub Releases, and post-release installation verification.
+
+### Changed
+
+- Bumped all Skill metadata versions to `0.2.0`.
+- Made `skills-ref` the standards-level validator and retained repository-specific validation plus the bundled skill-creator check as supplemental coverage.
+- Made `~/.agents/skills` the default shared Codex/Cline destination in `deploy.sh`; explicit root flags remain available for legacy or isolated layouts.
+- Reframed `deploy.sh` as a maintainer local-development helper while making `npx skills@latest` the ordinary user installation path.
+- Reworked the README around quick start, routing, verification, updates, contributor workflow, and releases.
+
+### Design intent
+
+This release improves selection and distribution reliability without increasing the 11-Skill surface area. The routing matrix is guidance rather than a mandatory full workflow, and negative cases protect against activating DDD, architecture, planning, or delivery ceremony from incidental keywords alone.
+
 ## v0.1.0 - Initial Skill Suite
 
 ### Added

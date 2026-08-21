@@ -1,9 +1,9 @@
 ---
 name: incremental-implementation
-description: Deliver larger changes through small vertical slices, explicit compatibility steps, safe migrations, and frequent verification instead of one large rewrite.
+description: Sequence a large change, migration, or refactor into small vertical slices with compatibility steps, safety nets, and frequent runnable verification. Do not use it as the primary Skill for ordinary task planning, one behavior's TDD loop, or active failure diagnosis.
 license: AGPL-3.0-only
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: "implementation"
 ---
 

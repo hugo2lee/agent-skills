@@ -1,9 +1,9 @@
 ---
 name: systematic-debugging
-description: Diagnose failures through reproduction, evidence, falsifiable hypotheses, minimal fixes, regression tests, and explicit verification instead of random edits.
+description: Investigate an actual test, build, runtime, integration, timeout, regression, or deployment failure with reproduction, evidence, falsifiable hypotheses, minimal fixes, and regression verification. Do not replace diagnosis with architecture redesign, broad refactoring, or compile-only confidence.
 license: AGPL-3.0-only
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: "debugging"
 ---
 

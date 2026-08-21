@@ -5,8 +5,9 @@ ROOT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd -P)"
 SOURCE_DIR="$ROOT_DIR/skills"
 USER_DIR="${HOME:?HOME must be set}"
 
-CLINE_ROOT="${AGENT_SKILLS_CLINE_ROOT:-$USER_DIR/.agents/skills}"
-CODEX_ROOT="${AGENT_SKILLS_CODEX_ROOT:-$USER_DIR/.codex/skills}"
+SHARED_ROOT="${AGENT_SKILLS_SHARED_ROOT:-$USER_DIR/.agents/skills}"
+CLINE_ROOT="${AGENT_SKILLS_CLINE_ROOT:-$SHARED_ROOT}"
+CODEX_ROOT="${AGENT_SKILLS_CODEX_ROOT:-$SHARED_ROOT}"
 OPENCLAW_ROOT="${AGENT_SKILLS_OPENCLAW_ROOT:-$USER_DIR/.openclaw/skills}"
 
 DRY_RUN=false
@@ -32,11 +33,13 @@ Usage:
   scripts/deploy.sh [--dry-run] [--force] \
     [--cline-root DIR] [--codex-root DIR] [--openclaw-root DIR]
 
-The default operation copies all managed Skills. --dry-run previews changes.
---force allows taking over an existing same-named directory without the
-managed marker. The default roots follow the npx skills agent locations;
-use the root flags or AGENT_SKILLS_*_ROOT environment variables to preserve
-an existing personal layout.
+This is a maintainer local-development helper; npx skills is the recommended
+installation path for ordinary users. The default operation copies all managed
+Skills. --dry-run previews changes. --force allows taking over an existing
+same-named directory without the managed marker. Cline and Codex share
+~/.agents/skills by default, while OpenClaw uses ~/.openclaw/skills. Use the
+root flags or AGENT_SKILLS_*_ROOT environment variables to preserve an older
+personal layout or to test isolated destinations.
 USAGE
 }
 
@@ -85,7 +88,21 @@ if ! command -v rsync >/dev/null 2>&1; then
 fi
 
 canonical_root="$(CDPATH= cd -- "$ROOT_DIR" && pwd -P)"
-targets=("$CLINE_ROOT" "$CODEX_ROOT" "$OPENCLAW_ROOT")
+targets=()
+for candidate in "$CLINE_ROOT" "$CODEX_ROOT" "$OPENCLAW_ROOT"; do
+  duplicate=false
+  if ((${#targets[@]} > 0)); then
+    for existing in "${targets[@]}"; do
+      if [[ "$existing" == "$candidate" ]]; then
+        duplicate=true
+        break
+      fi
+    done
+  fi
+  if [[ "$duplicate" != true ]]; then
+    targets+=("$candidate")
+  fi
+done
 
 for target in "${targets[@]}"; do
   case "$target" in

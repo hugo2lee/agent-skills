@@ -1,9 +1,9 @@
 ---
 name: engineering-philosophy
-description: Apply a pragmatic, evidence-based engineering philosophy across design, implementation, testing, review, and delivery; keep global principles separate from project rules and route specialized decisions to focused Skills.
+description: Govern cross-project engineering decisions and route ambiguous, cross-cutting, or global-versus-project rule questions to the smallest focused Skill. Use as an explicit engineering entrypoint; ordinary architecture, domain, testing, debugging, review, Git, and CI requests should go directly to their specialist.
 license: AGPL-3.0-only
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: "engineering-governance"
 ---
 
@@ -11,9 +11,17 @@ metadata:
 
 ## Use this skill when
 
-Use this Skill when a request asks how software should be designed, tested, reviewed, debugged, delivered, or improved across projects. Use it to choose a focused Skill and to decide whether a project lesson belongs in the global engineering philosophy.
+Use this Skill as an explicit engineering governance and routing entrypoint when:
 
-Do not use it as a replacement for a project rule file, a framework manual, or a detailed language guide.
+- the user asks for an overall engineering analysis;
+- it is unclear which specialist Skill owns the decision;
+- one request genuinely crosses several engineering concerns;
+- a rule may belong in global philosophy rather than project-local guidance; or
+- the process should be made lighter or heavier based on risk.
+
+Most normal requests should activate the focused specialist directly. Do not make this Skill a mandatory prelude to architecture, domain modeling, testing, debugging, review, Git, or CI work.
+
+Do not use it as a replacement for a project rule file, a framework manual, a detailed language guide, or a specialist Skill that already owns the primary decision.
 
 ## Core principle
 
@@ -65,6 +73,10 @@ Use this delivery chain when it fits the request:
 spec-driven-development → planning-and-task-breakdown → incremental-implementation → test-driven-development → code-review-and-quality → git-workflow-and-versioning → ci-cd-and-automation
 
 Route any observed failure to systematic-debugging. Route architecture and domain modeling questions to architecture-boundaries and ddd-lite respectively; those two Skills are peers, not layers of one mandatory architecture.
+
+## Routing behavior
+
+Select the smallest set of Skills needed for the current decision. Use [routing-matrix.md](references/routing-matrix.md) for signal-to-owner guidance, secondary collaboration rules, and negative routing cases. The matrix is a decision aid, not a mandatory workflow: a tiny explicit change may need no planning Skill, and a cross-cutting request may need one primary plus one or two focused secondary Skills.
 
 ## Rule promotion
 

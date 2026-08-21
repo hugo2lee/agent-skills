@@ -1,9 +1,9 @@
 ---
 name: code-review-and-quality
-description: Review changes for behavior, boundaries, regressions, maintainability, and verification evidence without replacing focused tests or inventing unrelated scope.
+description: Review a diff or proposed implementation for behavior correctness, boundary violations, regressions, error handling, maintainability, scope, and verification evidence before merge or handoff. Do not use it as the primary Skill for live failure diagnosis or new implementation planning.
 license: AGPL-3.0-only
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: "quality"
 ---
 

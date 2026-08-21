@@ -1,9 +1,9 @@
 ---
 name: spec-driven-development
-description: Turn an engineering request into a focused problem statement with constraints, acceptance criteria, non-goals, risks, and explicit decisions before implementation.
+description: Clarify an ambiguous or risky engineering request into a problem statement, constraints, acceptance criteria, non-goals, decisions, and open questions before implementation. Do not make full specification ceremony mandatory for small, explicit edits or task scheduling.
 license: AGPL-3.0-only
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: "planning"
 ---
 

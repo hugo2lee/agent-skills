@@ -1,9 +1,9 @@
 ---
 name: test-driven-development
-description: Implement behavior through a focused Red-Green-Refactor loop, using tests as executable feedback while avoiding implementation-detail tests and mock-driven design.
+description: Develop or change observable behavior through focused Red-Green-Refactor loops, regression tests, and vertical slices. Use when implementation can be driven by acceptance behavior; not as the primary Skill for unclear requirements, active diagnosis, or code review.
 license: AGPL-3.0-only
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: "implementation"
 ---
 

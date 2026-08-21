@@ -1,9 +1,9 @@
 ---
 name: ddd-lite
-description: Model domain behavior pragmatically by starting from business invariants and consistency needs, using DDD patterns only when their conditions are present.
+description: Model business behavior when invariants, lifecycle, consistency boundaries, domain language, or context translation need a decision; choose the smallest useful DDD pattern. Do not activate for simple CRUD or primarily technical boundaries, DI, or active failure diagnosis.
 license: AGPL-3.0-only
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: "domain-modeling"
 ---
 

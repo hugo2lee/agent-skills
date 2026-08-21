@@ -3,4 +3,4 @@ interface:
   default_prompt: "Use $engineering-philosophy to choose the right engineering Skill and keep global principles separate from project rules."
   short_description: "Govern pragmatic engineering decisions"
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false
