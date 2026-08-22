@@ -6,7 +6,7 @@
 
 ## REV-002
 
-- Do not block a consistent behavioral change for personal style.
+- Do not block a consistent behavioral change for subjective style preference.
 
 ## REV-003
 
@@ -21,4 +21,3 @@
 
 - Request migration-appropriate command or artifact evidence.
 - State what remains unchecked.
-

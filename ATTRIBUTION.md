@@ -1,6 +1,6 @@
 # Attribution and License Boundaries
 
-本仓库的 Skill 文本、示例和评测案例是针对个人工程实践重新编写的原创整理。
+本仓库的 Skill 文本、示例和评测案例是面向通用软件工程场景重新编写的原创整理。
 
 设计过程中参考了公开的软件工程思想，包括 Ports and Adapters、Dependency Inversion、务实 DDD、TDD、系统化调试和持续交付实践。本仓库不直接复制上游 Skill 的长篇文本、代码或专有资产。
 

@@ -10,7 +10,7 @@ Expected focus: report a high-severity actionable finding with location, impact,
 
 Prompt: The implementation uses a different naming style but behavior and project convention are consistent.
 
-Expected focus: do not block on personal taste.
+Expected focus: do not block on subjective style preference.
 
 ## REV-003 — Missing regression test
 

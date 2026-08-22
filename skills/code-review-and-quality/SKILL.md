@@ -55,7 +55,7 @@ Compare these artifacts rather than reviewing the diff in isolation:
 ## Do not
 
 - approve because tests are green without checking behavior;
-- reject a change only because it differs from personal taste;
+- reject a change only because it differs from subjective taste;
 - request an interface or pattern without concrete change pressure;
 - mix unrelated cleanup into a required fix;
 - delete a failing baseline to make CI green;

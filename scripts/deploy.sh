@@ -44,8 +44,8 @@ Skills. --dry-run previews changes. --force allows taking over an existing
 same-named directory without the managed marker. Codex uses ~/.codex/skills,
 Cline uses ~/.agents/skills, and OpenClaw uses ~/.openclaw/skills by default.
 Use the root flags or AGENT_SKILLS_*_ROOT environment variables to test isolated
-destinations. AGENT_SKILLS_SHARED_ROOT remains a compatibility override for an
-older personal layout and applies to both Codex and Cline unless their specific
+destinations. AGENT_SKILLS_SHARED_ROOT remains a compatibility override for a
+legacy shared layout and applies to both Codex and Cline unless their specific
 root override is set.
 USAGE
 }

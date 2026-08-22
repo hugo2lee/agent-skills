@@ -21,13 +21,13 @@
 - Added release behavior baseline guidance distinguishing service behavior, persistence integration, outbound contract, and inbound mapping evidence.
 - Added 30 machine-readable lifecycle eval cases covering clarification, reconciliation, repository analysis, architecture pressure, slices, baselines, debugging, review, and release gates.
 - Added a root `VERSION` file and version consistency checks for all 11 Skills, README, CHANGELOG, and optional tag context.
-- Added the v0.3.0 migration note for the two Skill renames and the repository identity transition.
+- Added the v0.3.0 migration note for the two Skill renames and the public repository identity.
 
 ### Renamed
 
 - Renamed `spec-driven-development` to `requirement-engineering`.
 - Renamed `planning-and-task-breakdown` to `change-planning`.
-- Updated repository-facing install documentation from `hugo2lee/agent-skills` to the target identity `hugo2lee/engineering-philosophy`; the GitHub rename itself remains a manual maintainer action.
+- Updated repository-facing installation documentation to the public `engineering-philosophy` repository identity.
 
 ### Changed
 
@@ -40,6 +40,7 @@
 - Updated review guidance to compare requirement, plan, diff, baselines, and evidence, while allowing recorded plan evolution.
 - Updated Git and CI/CD guidance to preserve release traceability, artifact identity, failure evidence, and stop conditions.
 - Updated validation, deployment, smoke-test, routing, README, release checklist, and CHANGELOG for the v0.3 contract.
+- Generalized public documentation, attribution, and review language so the Skill Suite is presented as an industry-wide engineering reference rather than an author's personal methodology.
 
 ### Design intent
 
@@ -90,6 +91,6 @@ This release improved selection and distribution reliability without increasing 
 
 ### Design intent
 
-This release established a portable personal engineering baseline. It favors meaningful boundaries over mechanical abstractions, conditional use of heavyweight patterns, explicit verification, and small reversible changes.
+This release established a portable engineering baseline. It favors meaningful boundaries over mechanical abstractions, conditional use of heavyweight patterns, explicit verification, and small reversible changes.
 
 The suite intentionally did not include C++, security-hardening, observability, documentation-and-ADRs, or an Agent-specific automatic eval runner.

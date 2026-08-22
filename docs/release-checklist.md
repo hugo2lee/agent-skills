@@ -6,7 +6,7 @@ Use this checklist for a versioned Skill Suite release. The repository is distri
 
 - [ ] Confirm the working tree and isolate unrelated user changes.
 - [ ] Keep exactly 11 top-level Skills.
-- [ ] Confirm the target identity is `hugo2lee/engineering-philosophy`; do not claim the GitHub rename is complete until it is done in Settings.
+- [ ] Confirm the public repository identity is `hugo2lee/engineering-philosophy`.
 - [ ] Confirm `VERSION` is `0.3.0` and all Skill metadata versions agree.
 - [ ] Confirm `requirement-engineering` and `change-planning` replace the two v0.2.x names.
 - [ ] Confirm the Feature Change Lifecycle, four proportional gates, and Feature Change Record are documented.
@@ -53,10 +53,9 @@ git tag -a v0.3.0 <release-commit> \
 git push origin v0.3.0
 ```
 
-## GitHub repository rename
+## Repository identity
 
-- [ ] In GitHub open Settings → General → Repository name and rename `agent-skills` to `engineering-philosophy`.
-- [ ] Verify the old HTTPS and SSH URLs redirect or fail in the expected way.
+- [ ] Verify the GitHub repository is named `engineering-philosophy`.
 - [ ] Update existing clones with `git remote set-url origin git@github.com:hugo2lee/engineering-philosophy.git`.
 - [ ] Verify `npx skills@latest add hugo2lee/engineering-philosophy --list` against the public repository.
 

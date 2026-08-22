@@ -4,9 +4,9 @@ Evidence-driven software engineering philosophy for AI-assisted development.
 
 当前稳定版本：**v0.3.0 — Evidence-Driven Feature Lifecycle**
 
-这是一个可独立触发、独立维护、独立评测的个人工程方法论 Skill Suite。它帮助 Codex、Cline、OpenClaw 以及其他兼容 Agent Skills 规范的 Agent，在需求澄清、仓库分析、架构演化、实现、评审和发布之间保持可追溯的工程判断。
+这是一个可独立触发、独立维护、独立评测的通用软件工程方法论 Skill Suite。它帮助 Codex、Cline、OpenClaw 以及其他兼容 Agent Skills 规范的 Agent，在需求澄清、仓库分析、架构演化、实现、评审和发布之间保持可追溯的工程判断。
 
-仓库源码目标身份是 `hugo2lee/engineering-philosophy`。本地源码已经按新身份更新；GitHub 仓库重命名仍需维护者在 GitHub Settings → General → Repository name 手动完成。在重命名前，旧地址 `hugo2lee/agent-skills` 仍是当前远端地址；重命名后 GitHub 通常会提供旧地址跳转，但应实际验证并更新本地 remote。
+公开源码仓库地址是 `hugo2lee/engineering-philosophy`。该仓库面向通用软件工程场景，不绑定特定作者、公司、团队或技术栈的工程偏好。
 
 ## Core Philosophy
 
@@ -54,7 +54,7 @@ Request
 
 ## Quick Start
 
-普通用户使用 `npx skills` 从公开 GitHub 仓库安装，不需要发布 npm 包。当前仓库发布后的推荐目标是 `hugo2lee/engineering-philosophy`：
+普通用户使用 `npx skills` 从公开 GitHub 仓库安装，不需要发布 npm 包。当前公开仓库地址是 `hugo2lee/engineering-philosophy`：
 
 ```sh
 # 查看所有 Skill
@@ -190,7 +190,7 @@ npx skills@latest add hugo2lee/engineering-philosophy \
   --yes
 ```
 
-这里使用的是当前 CLI 已验证的 `remove [skills...] --global --yes` 语法。若 GitHub 仓库改名尚未完成，短时间内可以使用旧地址 `hugo2lee/agent-skills`；正式文档和后续安装目标统一使用 `hugo2lee/engineering-philosophy`。迁移细节见 [v0.3.0 skill rename migration](docs/migrations/v0.3.0-skill-renames.md)。
+这里使用的是当前 CLI 已验证的 `remove [skills...] --global --yes` 语法。正式安装目标是 `hugo2lee/engineering-philosophy`；迁移细节见 [v0.3.0 skill rename migration](docs/migrations/v0.3.0-skill-renames.md)。
 
 ## Validation
 
