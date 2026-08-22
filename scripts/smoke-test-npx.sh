@@ -4,13 +4,13 @@ set -Eeuo pipefail
 ROOT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd -P)"
 SKILLS=(
   engineering-philosophy
+  requirement-engineering
+  change-planning
   architecture-boundaries
   ddd-lite
+  incremental-implementation
   test-driven-development
   systematic-debugging
-  spec-driven-development
-  planning-and-task-breakdown
-  incremental-implementation
   code-review-and-quality
   git-workflow-and-versioning
   ci-cd-and-automation
@@ -92,6 +92,13 @@ for skill in "${SKILLS[@]}"; do
     printf 'ERROR: installed Skill is missing SKILL.md: %s\n' "$skill" >&2
     exit 1
   }
+done
+
+for old_skill in spec-driven-development planning-and-task-breakdown; do
+  if [[ -e "$installed_root/$old_skill" ]]; then
+    printf 'ERROR: stale renamed Skill was installed: %s\n' "$old_skill" >&2
+    exit 1
+  fi
 done
 
 printf 'npx skills discovery and installation smoke test passed: %d Skills -> %s\n' \

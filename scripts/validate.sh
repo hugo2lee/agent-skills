@@ -9,13 +9,13 @@ fi
 
 SKILLS=(
   engineering-philosophy
+  requirement-engineering
+  change-planning
   architecture-boundaries
   ddd-lite
+  incremental-implementation
   test-driven-development
   systematic-debugging
-  spec-driven-development
-  planning-and-task-breakdown
-  incremental-implementation
   code-review-and-quality
   git-workflow-and-versioning
   ci-cd-and-automation
@@ -27,6 +27,17 @@ fail() {
   printf 'ERROR: %s\n' "$*" >&2
   failures=$((failures + 1))
 }
+
+VERSION_FILE="$ROOT_DIR/VERSION"
+VERSION=""
+if [[ -f "$VERSION_FILE" ]]; then
+  VERSION="$(tr -d '[:space:]' < "$VERSION_FILE")"
+else
+  fail "missing root VERSION file"
+fi
+if [[ -n "$VERSION" && ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  fail "VERSION must contain a plain MAJOR.MINOR.PATCH value: $VERSION"
+fi
 
 if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
   fail "Python executable not found: $PYTHON_BIN"
@@ -77,7 +88,7 @@ for skill in "${SKILLS[@]}"; do
     [[ "$first_line" == "---" ]] || fail "$skill SKILL.md has no YAML frontmatter"
     grep -q "^name: $skill$" "$skill_md" || fail "$skill frontmatter name does not match directory"
     grep -q "^description: " "$skill_md" || fail "$skill has no description"
-    grep -q "\\[TODO:" "$skill_md" && fail "$skill contains an unfinished TODO"
+    grep -q "\[TODO:" "$skill_md" && fail "$skill contains an unfinished TODO"
   fi
 
   if [[ -f "$metadata" ]]; then
@@ -109,7 +120,8 @@ for skill in "${SKILLS[@]}"; do
 done
 
 if command -v "$PYTHON_BIN" >/dev/null 2>&1; then
-  if ! "$PYTHON_BIN" - "$ROOT_DIR" "${SKILLS[@]}" <<'PY'
+  if ! "$PYTHON_BIN" - "$ROOT_DIR" "$VERSION" "${SKILLS[@]}" <<'PY'
+import os
 import re
 import sys
 from pathlib import Path
@@ -122,8 +134,9 @@ except ImportError as exc:
     sys.exit(1)
 
 root = Path(sys.argv[1])
-skills = sys.argv[2:]
-expected_version = "0.2.0"
+expected_version = sys.argv[2]
+skills = sys.argv[3:]
+skill_names = set(skills)
 errors = []
 
 
@@ -163,13 +176,28 @@ def check_links(skill_dir):
                 errors.append(f"{markdown.relative_to(root)}: broken reference link {raw_target}")
 
 
-skill_names = set(skills)
+def validate_skill_list(values, case_id, field):
+    if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
+        errors.append(f"{case_id}: {field} must be a list of Skill names")
+        return
+    unknown = [value for value in values if value not in skill_names]
+    if unknown:
+        errors.append(f"{case_id}: {field} contains unknown Skills {unknown}")
+
+
 skill_dirs = root / "skills"
-discovered = sorted(path.parent.name for path in skill_dirs.rglob("SKILL.md"))
+discovered = sorted(path.parent.name for path in skill_dirs.glob("*/SKILL.md"))
 if discovered != sorted(skills):
     errors.append(f"skills/: expected exactly {len(skills)} top-level Skills, found {discovered}")
 if len(discovered) != len(set(discovered)):
     errors.append("skills/: duplicate Skill directory names detected")
+
+old_skill_names = {"spec-driven-development", "planning-and-task-breakdown"}
+for old_name in old_skill_names:
+    if (skill_dirs / old_name).exists():
+        errors.append(f"skills/: stale renamed Skill directory remains: {old_name}")
+    if (root / "evals" / old_name).exists():
+        errors.append(f"evals/: stale renamed eval directory remains: {old_name}")
 
 minimum_cases = {
     "engineering-philosophy": 8,
@@ -178,6 +206,7 @@ minimum_cases = {
     "test-driven-development": 8,
     "systematic-debugging": 8,
 }
+global_eval_ids = {}
 
 for skill in skills:
     skill_dir = root / "skills" / skill
@@ -233,9 +262,34 @@ for skill in skills:
             errors.append(f"{skill}: duplicate case ID in expected.md")
         if set(case_ids) != set(expected_ids):
             errors.append(f"{skill}: cases.md and expected.md IDs differ")
+        for case_id in case_ids:
+            previous = global_eval_ids.get(case_id)
+            if previous is not None:
+                errors.append(f"duplicate eval case ID {case_id}: {previous} and {skill}/cases.md")
+            else:
+                global_eval_ids[case_id] = f"{skill}/cases.md"
         minimum = minimum_cases.get(skill, 5)
         if len(case_ids) < minimum:
             errors.append(f"{skill}: expected at least {minimum} eval cases, found {len(case_ids)}")
+
+readme = root / "README.md"
+if not readme.exists() or f"v{expected_version}" not in readme.read_text(encoding="utf-8"):
+    errors.append(f"README.md must declare stable version v{expected_version}")
+if not readme.exists() or "hugo2lee/engineering-philosophy" not in readme.read_text(encoding="utf-8"):
+    errors.append("README.md must document the target repository hugo2lee/engineering-philosophy")
+
+changelog = root / "CHANGELOG.md"
+if not changelog.exists() or f"## v{expected_version} -" not in changelog.read_text(encoding="utf-8"):
+    errors.append(f"CHANGELOG.md must contain the v{expected_version} release heading")
+
+version_value = (root / "VERSION").read_text(encoding="utf-8").strip() if (root / "VERSION").exists() else ""
+if version_value != expected_version:
+    errors.append(f"VERSION must equal {expected_version}, found {version_value!r}")
+
+tag_ref = os.environ.get("GITHUB_REF", "")
+tag_name = os.environ.get("GITHUB_REF_NAME", "")
+if tag_ref.startswith("refs/tags/") and tag_name != f"v{expected_version}":
+    errors.append(f"GitHub tag context must be v{expected_version}, found {tag_name or tag_ref}")
 
 routing_path = root / "evals" / "routing" / "cases.yaml"
 if not routing_path.exists():
@@ -266,6 +320,11 @@ else:
         if case_id in seen_ids:
             errors.append(f"routing: duplicate case ID {case_id}")
         seen_ids.add(case_id)
+        previous = global_eval_ids.get(case_id)
+        if previous is not None:
+            errors.append(f"duplicate eval case ID {case_id}: {previous} and evals/routing/cases.yaml")
+        else:
+            global_eval_ids[case_id] = "evals/routing/cases.yaml"
         routing_by_id[case_id] = case
         language = case["language"]
         if language not in counts:
@@ -275,11 +334,7 @@ else:
         if not isinstance(case["prompt"], str) or not case["prompt"].strip():
             errors.append(f"routing case {case_id}: prompt must be non-empty")
         for field in ("expected_primary", "allowed_secondary", "forbidden"):
-            values = case[field]
-            if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
-                errors.append(f"routing case {case_id}: {field} must be a list of Skill names")
-            elif any(value not in skill_names for value in values):
-                errors.append(f"routing case {case_id}: {field} contains an unknown Skill")
+            validate_skill_list(case[field], case_id, field)
         if any(value in case["forbidden"] for value in case["expected_primary"]):
             errors.append(f"routing case {case_id}: expected primary is also forbidden")
         prompt = case["prompt"]
@@ -303,11 +358,11 @@ else:
         "ROUTE-EN-013": "ddd-lite",
         "ROUTE-ZH-003": "architecture-boundaries",
         "ROUTE-EN-015": "architecture-boundaries",
-        "ROUTE-ZH-004": "planning-and-task-breakdown",
-        "ROUTE-EN-017": "spec-driven-development",
+        "ROUTE-ZH-004": "change-planning",
+        "ROUTE-EN-017": "requirement-engineering",
         "ROUTE-ZH-005": "incremental-implementation",
-        "ROUTE-ZH-006": "planning-and-task-breakdown",
-        "ROUTE-EN-018": "planning-and-task-breakdown",
+        "ROUTE-ZH-006": "change-planning",
+        "ROUTE-EN-018": "change-planning",
         "ROUTE-ZH-007": "code-review-and-quality",
         "ROUTE-EN-019": "code-review-and-quality",
         "ROUTE-EN-020": "systematic-debugging",
@@ -320,6 +375,99 @@ else:
             errors.append(f"routing: required negative case is missing: {case_id}")
         elif forbidden_skill not in case.get("forbidden", []):
             errors.append(f"routing case {case_id}: must forbid {forbidden_skill}")
+
+lifecycle_path = root / "evals" / "lifecycle" / "cases.yaml"
+if not lifecycle_path.exists():
+    errors.append("evals/lifecycle/cases.yaml is missing")
+else:
+    try:
+        lifecycle_cases = yaml.safe_load(lifecycle_path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        errors.append(f"evals/lifecycle/cases.yaml: invalid YAML: {exc}")
+        lifecycle_cases = []
+    if not isinstance(lifecycle_cases, list):
+        errors.append("evals/lifecycle/cases.yaml: top level must be a list")
+        lifecycle_cases = []
+    lifecycle_required = {
+        "id", "category", "language", "prompt", "context", "expected_primary",
+        "allowed_secondary", "expected_decisions", "forbidden", "acceptance",
+    }
+    lifecycle_seen = set()
+    lifecycle_categories = set()
+    for case in lifecycle_cases:
+        if not isinstance(case, dict):
+            errors.append("lifecycle: every case must be a mapping")
+            continue
+        case_id = case.get("id", "<unknown>")
+        missing = lifecycle_required - set(case)
+        if missing:
+            errors.append(f"lifecycle case {case_id}: missing {sorted(missing)}")
+            continue
+        if case_id in lifecycle_seen:
+            errors.append(f"lifecycle: duplicate case ID {case_id}")
+        lifecycle_seen.add(case_id)
+        previous = global_eval_ids.get(case_id)
+        if previous is not None:
+            errors.append(f"duplicate eval case ID {case_id}: {previous} and evals/lifecycle/cases.yaml")
+        else:
+            global_eval_ids[case_id] = "evals/lifecycle/cases.yaml"
+        category = case["category"]
+        if not isinstance(category, str) or not category.strip():
+            errors.append(f"lifecycle case {case_id}: category must be non-empty")
+        else:
+            lifecycle_categories.add(category)
+        language = case["language"]
+        if language not in {"zh", "en", "mixed"}:
+            errors.append(f"lifecycle case {case_id}: language must be zh, en, or mixed")
+        prompt = case["prompt"]
+        if not isinstance(prompt, str) or not prompt.strip():
+            errors.append(f"lifecycle case {case_id}: prompt must be non-empty")
+        if not isinstance(case["context"], str) or not case["context"].strip():
+            errors.append(f"lifecycle case {case_id}: context must be non-empty")
+        primary = case["expected_primary"]
+        if not isinstance(primary, str) or primary not in skill_names:
+            errors.append(f"lifecycle case {case_id}: expected_primary must be one Skill name")
+        validate_skill_list(case["allowed_secondary"], case_id, "allowed_secondary")
+        validate_skill_list(case["forbidden"], case_id, "forbidden")
+        if primary in case["forbidden"]:
+            errors.append(f"lifecycle case {case_id}: expected primary is also forbidden")
+        decisions = case["expected_decisions"]
+        if not isinstance(decisions, list) or not decisions or not all(isinstance(value, str) for value in decisions):
+            errors.append(f"lifecycle case {case_id}: expected_decisions must be a non-empty list of strings")
+        acceptance = case["acceptance"]
+        if not isinstance(acceptance, str) or not acceptance.strip():
+            errors.append(f"lifecycle case {case_id}: acceptance must be non-empty")
+    if len(lifecycle_cases) < 30:
+        errors.append(f"lifecycle: expected at least 30 cases, found {len(lifecycle_cases)}")
+    required_categories = {
+        "requirement-clarification", "requirement-reconciliation", "repository-analysis",
+        "architecture-pressure", "change-planning", "behavior-implementation",
+        "service-behavior-baseline", "persistence-baseline", "outbound-baseline",
+        "inbound-baseline", "regression-debugging", "review-traceability", "release-readiness",
+    }
+    missing_categories = required_categories - lifecycle_categories
+    if missing_categories:
+        errors.append(f"lifecycle: missing required categories {sorted(missing_categories)}")
+
+# Old Skill names are allowed only in intentional migration/history prose. They
+# must not leak into active Skill instructions or executable routing data.
+allowed_stale_paths = {
+    root / "README.md",
+    root / "CHANGELOG.md",
+    root / "docs" / "migrations" / "v0.3.0-skill-renames.md",
+    root / "scripts" / "validate.sh",
+    root / "scripts" / "smoke-test-npx.sh",
+}
+for path in root.rglob("*"):
+    if not path.is_file() or ".git" in path.parts or path in allowed_stale_paths:
+        continue
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (UnicodeDecodeError, OSError):
+        continue
+    for old_name in old_skill_names:
+        if old_name in text:
+            errors.append(f"{path.relative_to(root)} contains stale active Skill name {old_name}")
 
 for error in errors:
     print(f"ERROR: {error}", file=sys.stderr)
@@ -342,4 +490,4 @@ if (( failures > 0 )); then
   exit 1
 fi
 
-printf 'Validated %d Skills with skills-ref, repository rules, references, routing evals, and metadata.\n' "${#SKILLS[@]}"
+printf 'Validated %d Skills at v%s with skills-ref, repository rules, references, routing, lifecycle evals, and metadata.\n' "${#SKILLS[@]}" "$VERSION"

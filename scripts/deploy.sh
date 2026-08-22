@@ -5,9 +5,14 @@ ROOT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd -P)"
 SOURCE_DIR="$ROOT_DIR/skills"
 USER_DIR="${HOME:?HOME must be set}"
 
-SHARED_ROOT="${AGENT_SKILLS_SHARED_ROOT:-$USER_DIR/.agents/skills}"
-CLINE_ROOT="${AGENT_SKILLS_CLINE_ROOT:-$SHARED_ROOT}"
-CODEX_ROOT="${AGENT_SKILLS_CODEX_ROOT:-$SHARED_ROOT}"
+LEGACY_SHARED_ROOT="${AGENT_SKILLS_SHARED_ROOT:-}"
+if [[ -n "$LEGACY_SHARED_ROOT" ]]; then
+  CLINE_ROOT="${AGENT_SKILLS_CLINE_ROOT:-$LEGACY_SHARED_ROOT}"
+  CODEX_ROOT="${AGENT_SKILLS_CODEX_ROOT:-$LEGACY_SHARED_ROOT}"
+else
+  CLINE_ROOT="${AGENT_SKILLS_CLINE_ROOT:-$USER_DIR/.agents/skills}"
+  CODEX_ROOT="${AGENT_SKILLS_CODEX_ROOT:-$USER_DIR/.codex/skills}"
+fi
 OPENCLAW_ROOT="${AGENT_SKILLS_OPENCLAW_ROOT:-$USER_DIR/.openclaw/skills}"
 
 DRY_RUN=false
@@ -15,13 +20,13 @@ FORCE=false
 
 SKILLS=(
   engineering-philosophy
+  requirement-engineering
+  change-planning
   architecture-boundaries
   ddd-lite
+  incremental-implementation
   test-driven-development
   systematic-debugging
-  spec-driven-development
-  planning-and-task-breakdown
-  incremental-implementation
   code-review-and-quality
   git-workflow-and-versioning
   ci-cd-and-automation
@@ -36,10 +41,12 @@ Usage:
 This is a maintainer local-development helper; npx skills is the recommended
 installation path for ordinary users. The default operation copies all managed
 Skills. --dry-run previews changes. --force allows taking over an existing
-same-named directory without the managed marker. Cline and Codex share
-~/.agents/skills by default, while OpenClaw uses ~/.openclaw/skills. Use the
-root flags or AGENT_SKILLS_*_ROOT environment variables to preserve an older
-personal layout or to test isolated destinations.
+same-named directory without the managed marker. Codex uses ~/.codex/skills,
+Cline uses ~/.agents/skills, and OpenClaw uses ~/.openclaw/skills by default.
+Use the root flags or AGENT_SKILLS_*_ROOT environment variables to test isolated
+destinations. AGENT_SKILLS_SHARED_ROOT remains a compatibility override for an
+older personal layout and applies to both Codex and Cline unless their specific
+root override is set.
 USAGE
 }
 
