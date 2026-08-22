@@ -1,6 +1,6 @@
 # Routing cases are discovery tests, not expected prose answers.
 # language is deliberately explicit so the repository validator can enforce the
-# v0.2.0 distribution: at least 12 Chinese, 12 English, and 6 mixed cases.
+# v0.3.0 distribution: at least 12 Chinese, 12 English, and 6 mixed cases.
 - id: ROUTE-ZH-001
   language: zh
   prompt: >
@@ -10,7 +10,7 @@
   allowed_secondary: []
   forbidden:
     - ddd-lite
-    - planning-and-task-breakdown
+    - change-planning
 
 - id: ROUTE-ZH-002
   language: zh
@@ -32,17 +32,17 @@
   allowed_secondary: []
   forbidden:
     - architecture-boundaries
-    - planning-and-task-breakdown
+    - change-planning
 
 - id: ROUTE-ZH-004
   language: zh
   prompt: >
     产品只说“把通知做得更好”，请先帮我澄清用户、触发条件、验收标准和非目标。
   expected_primary:
-    - spec-driven-development
+    - requirement-engineering
   allowed_secondary: []
   forbidden:
-    - planning-and-task-breakdown
+    - change-planning
     - test-driven-development
 
 - id: ROUTE-ZH-005
@@ -50,10 +50,10 @@
   prompt: >
     需求已经明确，但要同时改 API、存储、测试和 pipeline，而且存在依赖，请先拆任务。
   expected_primary:
-    - planning-and-task-breakdown
+    - change-planning
   allowed_secondary: []
   forbidden:
-    - spec-driven-development
+    - requirement-engineering
     - incremental-implementation
 
 - id: ROUTE-ZH-006
@@ -65,7 +65,7 @@
   allowed_secondary:
     - test-driven-development
   forbidden:
-    - planning-and-task-breakdown
+    - change-planning
     - ci-cd-and-automation
 
 - id: ROUTE-ZH-007
@@ -120,7 +120,7 @@
   allowed_secondary: []
   forbidden:
     - ddd-lite
-    - planning-and-task-breakdown
+    - change-planning
     - test-driven-development
 
 - id: ROUTE-ZH-012
@@ -144,7 +144,7 @@
   allowed_secondary: []
   forbidden:
     - ddd-lite
-    - planning-and-task-breakdown
+    - change-planning
 
 - id: ROUTE-EN-014
   language: en
@@ -176,10 +176,10 @@
     The request says “improve notifications” but gives no audience, trigger, success
     measure, or non-goals. Clarify the specification first.
   expected_primary:
-    - spec-driven-development
+    - requirement-engineering
   allowed_secondary: []
   forbidden:
-    - planning-and-task-breakdown
+    - change-planning
     - test-driven-development
 
 - id: ROUTE-EN-017
@@ -188,10 +188,10 @@
     The feature is clearly defined but changes an API, domain rule, persistence layer,
     tests, and CI with dependencies. Break it into bounded executable tasks.
   expected_primary:
-    - planning-and-task-breakdown
+    - change-planning
   allowed_secondary: []
   forbidden:
-    - spec-driven-development
+    - requirement-engineering
     - incremental-implementation
 
 - id: ROUTE-EN-018
@@ -204,7 +204,7 @@
   allowed_secondary:
     - test-driven-development
   forbidden:
-    - planning-and-task-breakdown
+    - change-planning
     - ci-cd-and-automation
 
 - id: ROUTE-EN-019
@@ -265,7 +265,7 @@
   forbidden:
     - ddd-lite
     - architecture-boundaries
-    - planning-and-task-breakdown
+    - change-planning
 
 - id: ROUTE-EN-024
   language: en
@@ -278,7 +278,7 @@
     - ci-cd-and-automation
   forbidden:
     - architecture-boundaries
-    - planning-and-task-breakdown
+    - change-planning
 
 - id: ROUTE-MIX-025
   language: mixed
@@ -300,7 +300,7 @@
   allowed_secondary: []
   forbidden:
     - architecture-boundaries
-    - planning-and-task-breakdown
+    - change-planning
 
 - id: ROUTE-MIX-027
   language: mixed
@@ -318,11 +318,11 @@
   prompt: >
     需求已经明确但跨三个 packages with dependencies，先帮我拆 task，再决定 slice 顺序。
   expected_primary:
-    - planning-and-task-breakdown
+    - change-planning
   allowed_secondary:
     - incremental-implementation
   forbidden:
-    - spec-driven-development
+    - requirement-engineering
     - test-driven-development
 
 - id: ROUTE-MIX-029
@@ -347,4 +347,79 @@
     - ci-cd-and-automation
   forbidden:
     - systematic-debugging
-    - planning-and-task-breakdown
+    - change-planning
+
+- id: ROUTE-ZH-013
+  language: zh
+  prompt: >
+    新请求与已发布 baseline 冲突，请先做 requirement reconciliation，分类冲突并请用户决定。
+  expected_primary:
+    - requirement-engineering
+  allowed_secondary:
+    - engineering-philosophy
+  forbidden:
+    - test-driven-development
+    - architecture-boundaries
+
+- id: ROUTE-ZH-014
+  language: zh
+  prompt: >
+    需求已经批准，请先检查 repository 的入口、现有 capability、依赖和风险，再输出 change plan。
+  expected_primary:
+    - change-planning
+  allowed_secondary: []
+  forbidden:
+    - requirement-engineering
+    - test-driven-development
+
+- id: ROUTE-EN-025
+  language: en
+  prompt: >
+    A release behavior baseline failed after an implementation refactor and no behavior
+    change was authorized. Investigate the regression before changing the baseline.
+  expected_primary:
+    - systematic-debugging
+  allowed_secondary:
+    - test-driven-development
+  forbidden:
+    - architecture-boundaries
+    - git-workflow-and-versioning
+
+- id: ROUTE-EN-026
+  language: en
+  prompt: >
+    Implement a released service, persistence, outbound, and inbound behavior baseline
+    with focused tests at the boundaries that own each contract.
+  expected_primary:
+    - test-driven-development
+  allowed_secondary:
+    - architecture-boundaries
+  forbidden:
+    - ddd-lite
+    - ci-cd-and-automation
+
+- id: ROUTE-MIX-031
+  language: mixed
+  prompt: >
+    这个 business slice has demonstrated boundary pressure，先用 incremental implementation
+    规划 Business Value + Just-enough Architecture + Verification。
+  expected_primary:
+    - incremental-implementation
+  allowed_secondary:
+    - architecture-boundaries
+    - test-driven-development
+  forbidden:
+    - ddd-lite
+    - ci-cd-and-automation
+
+- id: ROUTE-MIX-032
+  language: mixed
+  prompt: >
+    请做 Gate 3 review：compare the Requirement Contract, Change Plan, actual diff,
+    baselines, and verification evidence。
+  expected_primary:
+    - code-review-and-quality
+  allowed_secondary: []
+  forbidden:
+    - systematic-debugging
+    - git-workflow-and-versioning

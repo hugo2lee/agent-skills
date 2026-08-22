@@ -1,237 +1,231 @@
-# Agent Skills
+# Engineering Philosophy
 
-个人工程哲学 Agent Skills Suite 的唯一源码仓库。
+Evidence-driven software engineering philosophy for AI-assisted development.
 
-当前稳定版本：v0.2.0 — Reliable Routing & Distribution
+当前稳定版本：**v0.3.0 — Evidence-Driven Feature Lifecycle**
 
-## What is this?
+这是一个可独立触发、独立维护、独立评测的个人工程方法论 Skill Suite。它帮助 Codex、Cline、OpenClaw 以及其他兼容 Agent Skills 规范的 Agent，在需求澄清、仓库分析、架构演化、实现、评审和发布之间保持可追溯的工程判断。
 
-这是一套可独立触发、独立维护、独立评测的个人工程方法论 Skills。核心指令和 references 使用英文，仓库维护说明和示例说明使用中文，目标是让同一套工程判断在 Codex、Cline、OpenClaw 以及其他兼容 Agent Skills 规范的 Agent 中复用。
+仓库源码目标身份是 `hugo2lee/engineering-philosophy`。本地源码已经按新身份更新；GitHub 仓库重命名仍需维护者在 GitHub Settings → General → Repository name 手动完成。在重命名前，旧地址 `hugo2lee/agent-skills` 仍是当前远端地址；重命名后 GitHub 通常会提供旧地址跳转，但应实际验证并更新本地 remote。
 
-v0.2.0 不增加顶层 Skill，重点提高现有 11 个 Skill 的发现、选择、路由、安装和验证可靠性。仍然只有以下 11 个顶层 Skill：
+## Core Philosophy
 
-- engineering-philosophy：显式工程治理与 Skill 路由总入口。
-- architecture-boundaries：技术边界、Ports and Adapters、依赖反转、显式 DI 和测试缝。
-- ddd-lite：以业务不变量和一致性需求为中心的务实 DDD。
-- test-driven-development：Red-Green-Refactor 和行为驱动的增量实现。
-- systematic-debugging：复现、证据、假设、最小修复和回归验证。
-- spec-driven-development：问题定义、约束、验收标准和非目标。
-- planning-and-task-breakdown：任务拆解、依赖、风险和检查点。
-- incremental-implementation：Vertical Slice、安全迁移和小批量变更。
-- code-review-and-quality：正确性、边界、回归风险和验证证据审查。
-- git-workflow-and-versioning：分支、原子提交、版本、Tag 和变更记录。
-- ci-cd-and-automation：自动化质量闸、构建、发布验证和失败处理。
+核心原则是：
 
-architecture-boundaries 下包含 Go 落地参考和 C++ 边界 realization reference；这不是新的 C++ 顶层 Skill。
+> Prefer the simplest architecture that preserves meaningful boundaries.
+
+v0.3.0 将这条原则落实为六个判断：
+
+1. 先澄清可观察行为，再讨论实现。
+2. 新需求必须与已发布行为、现有契约和当前能力对照，不能因为“新增”二字就重复实现。
+3. 先检查现有仓库和可复用能力，再制定计划。
+4. 架构来自已证明的变更压力，而不是来自对未来可能性的想象。
+5. 业务变化与必要的架构 enabler 通过可运行的 vertical slice 一起演进。
+6. 已发布的重要行为冻结为可执行 baseline；未经授权不能悄悄削弱。
+
+规则统一分为 `MUST`、`SHOULD` 和 `CONDITIONAL`。全局 Skill 不写入某个项目的 Go 版本、数据库、公司目录、分支策略、领域 Aggregate 或测试框架；这些属于项目规则、项目级 Skill 或 ADR。
+
+## Feature Change Lifecycle
+
+对有实际影响的功能变更，推荐按以下顺序推进：
+
+```text
+Request
+  -> Requirement Contract
+  -> Requirement Reconciliation
+  -> User Decision Gate
+  -> Repository Analysis
+  -> Change Analysis
+  -> Implementation Plan
+  -> Implementation & Discovery
+  -> Review Gate
+  -> Release Behavior Baseline
+  -> Release Gate
+```
+
+四个 Gate 是决策保护，不是文档仪式：
+
+- **Gate 1 — Requirement Approved**：行为、非目标、冲突和需要用户决定的事项已经清楚。
+- **Gate 2 — Ready for Implementation**：仓库影响面、复用能力、变更压力、架构 enabler、任务依赖和验证条件已明确。
+- **Gate 3 — Ready for Review**：实现、计划演化、行为测试、适用 baseline 和剩余不确定性都可审查。
+- **Gate 4 — Ready for Release**：验证过的就是将要发布的 artifact，质量闸、部署健康检查和停止/回滚条件齐备。
+
+简单、明确、孤立的修改可以把证据保留在任务或提交中；跨边界、兼容性敏感或发布风险较高的功能，建议创建 `docs/changes/<feature-name>.md`。详细流程见 [Feature Change Lifecycle](skills/engineering-philosophy/references/feature-change-lifecycle.md)，记录模板见 [Feature Change Record](skills/engineering-philosophy/references/feature-change-record.md)。
 
 ## Quick Start
 
-普通用户推荐使用 npx skills 从公开 GitHub 仓库安装，不需要发布 npm 包：
+普通用户使用 `npx skills` 从公开 GitHub 仓库安装，不需要发布 npm 包。当前仓库发布后的推荐目标是 `hugo2lee/engineering-philosophy`：
 
-~~~sh
-npx skills@latest add hugo2lee/agent-skills \
+```sh
+# 查看所有 Skill
+npx skills@latest add hugo2lee/engineering-philosophy --list
+
+# 安装全部 Skill
+npx skills@latest add hugo2lee/engineering-philosophy \
   --skill '*' \
   --global \
   --agent codex \
-  --agent cline
-~~~
+  --agent cline \
+  --agent openclaw
 
-当前 skills CLI 的 Codex + Cline 组合安装会使用共享用户目录：
-
-~~~text
-~/.agents/skills/
-~~~
-
-这也是本仓库当前推荐的 Codex/Cline 全局 Skill 目录。OpenClaw 仍由 CLI 使用自己的用户目录。安装方式默认可能使用 symlink；如果环境不适合 symlink，可以加上 --copy。
-
-查看仓库发现的全部 Skill：
-
-~~~sh
-npx skills@latest add hugo2lee/agent-skills --list
-~~~
-
-只安装一个 Skill：
-
-~~~sh
-npx skills@latest add hugo2lee/agent-skills \
+# 只安装 architecture-boundaries
+npx skills@latest add hugo2lee/engineering-philosophy \
   --skill architecture-boundaries \
   --global \
-  --agent codex \
-  --agent cline
-~~~
+  --agent codex
+```
 
-## Verify Installation
+`npx skills` 会自动发现仓库中的 `skills/<name>/SKILL.md`，因此不需要创建或发布 npm 包。安装后可以使用 `npx skills ls -g` 查看，使用 `npx skills update -g -y` 更新已安装 Skill。
 
-查看已经安装的全局 Skill：
+不同 Agent 的默认全局目录如下：
 
-~~~sh
-npx skills ls -g
-~~~
+- Codex：`~/.codex/skills`
+- Cline：`~/.agents/skills`
+- OpenClaw：`~/.openclaw/skills`
 
-确认共享目录中存在目标 Skill：
+不同版本的 CLI 可能为多 Agent 安装选择共享目录；以 `npx skills ls -g` 和实际 Agent 文档为准。维护者的 `scripts/deploy.sh` 提供精确目录、marker 和接管保护，普通用户优先使用 `npx skills`。
 
-~~~sh
-test -f ~/.agents/skills/architecture-boundaries/SKILL.md
-~~~
+## The 11 Skills
 
-在 Codex 中可以显式调用：
+仓库保持恰好 11 个顶层 Skill。仓库是发布和验证边界，不是一个必须整体触发的巨大 Skill；每个目录都可以独立调用。
 
-~~~text
-$architecture-boundaries
-$ddd-lite
-$systematic-debugging
-~~~
+- `engineering-philosophy`：总纲、规则等级、全局/项目边界、生命周期和路由。显式入口，不作为所有请求的必经层。
+- `requirement-engineering`：Requirement Contract、现有需求/能力/发布行为对照、冲突分类和用户决策门。
+- `change-planning`：仓库影响分析、能力复用、依赖、风险、检查点和可执行 Change Plan。
+- `architecture-boundaries`：真实技术边界、Ports and Adapters、DIP、显式 DI、测试缝和架构压力/enabler。
+- `ddd-lite`：业务不变量、Entity、Value Object、Aggregate、Domain Service、Domain Event 和 Bounded Context 的条件化选择。
+- `incremental-implementation`：Business Value + Just-enough Architecture + Verification 的 vertical slice、兼容迁移和安全排序。
+- `test-driven-development`：Red-Green-Refactor、行为测试、回归测试和 Release Behavior Baseline。
+- `systematic-debugging`：复现、证据、可证伪假设、最小修复、回归验证和不确定性记录。
+- `code-review-and-quality`：Requirement Contract、Change Plan、diff、baseline 和验证证据的 Gate 3 审查。
+- `git-workflow-and-versioning`：分支、原子提交、版本、CHANGELOG、Tag 和发布可追溯性。
+- `ci-cd-and-automation`：测试/构建质量闸、artifact 身份、部署健康、停止/回滚和 Gate 4。
 
-其他 Agent 可以根据各 Skill 的 description 自动选择 specialist Skill。description 只承担 discovery/routing 作用，详细规则留在对应的 SKILL.md 和 references 中。
+首版和当前版本均不创建 C++ Skill；也不创建独立的安全、可观测性或 ADR Skill。代码示例和语言落地参考以 Go 为主，不把项目版本或公司约束写进全局 Skill。
 
-## Entry Point
+## Requirement Reconciliation
 
-$engineering-philosophy 是显式总入口，用于：
+每个非平凡的新请求都要与四类现有证据对照：既有需求和决策、已实现能力、公开/内部契约、已发布 baseline。结果分类为：
 
-- 用户要求整体工程分析；
-- 不确定应该选择哪个 Skill；
-- 一个任务确实横跨多个工程关注点；
-- 判断规则应属于 global philosophy 还是 project-local guidance；
-- 根据风险决定流程应该更轻还是更重。
+- `New`
+- `Overlap`
+- `Duplicate`
+- `Compatible Extension`
+- `Conflict`
+- `Replacement`
 
-它不会作为所有普通请求的必经层。明确的架构请求直接进入 architecture-boundaries，领域不变量直接进入 ddd-lite，实际失败直接进入 systematic-debugging。总纲中的路由矩阵见 skills/engineering-philosophy/references/routing-matrix.md。
+当新请求与已发布行为冲突，或两个实现都合理但用户可感知结果不同，必须进入 User Decision Gate。不要把未确认的产品决定伪装成架构决定。
 
-## Skill Routing
+## Evolutionary Architecture
 
-选择能拥有当前主要工程决策的最小 Skill 集合：
+架构推理必须写出：
+
+```text
+Business change
+    -> demonstrated change pressure
+    -> architectural requirement
+    -> smallest useful enabler
+    -> verification evidence
+```
+
+一次未来可能性不足以创建完整插件系统、Factory、接口层或平台。真正的压力可以来自重复变更穿过同一不稳定边界、多个 caller 重复协议转换造成缺陷、旧新路径必须共存，或依赖方向已经阻碍可验证变更。业务不变量和一致性边界则路由到 `ddd-lite`。
+
+## Release Behavior Baseline
+
+重要的已发布行为需要在合适的边界冻结为可执行 baseline：
+
+1. **Service Behavior Baseline**：业务输入/输出、成功/错误语义、状态变化和重要副作用。
+2. **Persistence Integration Baseline**：真实存储 adapter 的 Save/Load/Update、事务、约束、映射和迁移行为。
+3. **Outbound Contract Baseline**：Port、Adapter 与 provider/protocol 的请求、响应、错误、超时、重试和幂等语义。
+4. **Inbound Mapping Baseline**：transport 到 command、结果/错误到 transport 的映射。
+
+Service 测试不能证明真实数据库 adapter；mock 的调用次数不能证明 outbound contract；也不要在每个 transport 重复完整业务测试。baseline 失败且没有授权行为变化时，修实现或测试设置；只有明确授权的行为变化才能同步更新需求、决策、record、baseline、实现和 release notes。
+
+## Feature Change Record
+
+推荐的项目级记录路径是 `docs/changes/<feature-name>.md`，包括：Request、Requirement Contract、Requirement Reconciliation、Repository Analysis、Change Analysis、Design Decisions、Implementation Plan、Implementation & Discovery Notes、四类 Release Behavior Baseline、Verification 和 Release Traceability。
+
+记录不是第二份代码。它的价值是让实现中的发现、计划偏离、用户决策、验证证据和最终发布 artifact 互相可追溯。完整模板见 [feature-change-record.md](skills/engineering-philosophy/references/feature-change-record.md)。
+
+## Routing
+
+选择拥有当前主要决策的最小 Skill：
 
 | Signal | Primary Skill | 典型协作 |
 | --- | --- | --- |
-| 架构边界、DI、Port、Adapter、interface | architecture-boundaries | 发现业务不变量时再加 ddd-lite |
-| Aggregate、Value Object、不变量、领域语言 | ddd-lite | 发现技术边界时再加 architecture-boundaries |
-| Bug、异常、超时、回归、根因调查 | systematic-debugging | 需要回归测试时再加 test-driven-development |
-| 需求不清、验收标准不明确 | spec-driven-development | 规格明确后再进入 planning |
-| 目标明确但复杂、存在依赖 | planning-and-task-breakdown | 大型迁移再加 incremental-implementation |
-| 大型变更、迁移、Vertical Slice | incremental-implementation | 每个行为切片可加 test-driven-development |
-| 新行为、Red-Green-Refactor | test-driven-development | 跨层变更时可加 incremental-implementation |
-| PR、MR、diff、代码质量审查 | code-review-and-quality | 发现真实失败时转 systematic-debugging |
-| branch、commit、tag、版本 | git-workflow-and-versioning | 发布自动化时协作 ci-cd-and-automation |
-| pipeline、质量闸、发布自动化 | ci-cd-and-automation | pipeline 失败时转 systematic-debugging |
+| 需求不清、需求冲突、重复能力或用户决策 | `requirement-engineering` | 明确后进入 `change-planning` |
+| 需求已批准，需要仓库影响分析、依赖和风险 | `change-planning` | 大变更进入 `incremental-implementation` |
+| 已证明的技术变更压力、DI、Port、Adapter、依赖方向 | `architecture-boundaries` | 发现业务不变量时协作 `ddd-lite` |
+| 业务不变量、生命周期、一致性边界 | `ddd-lite` | 技术翻译时协作 `architecture-boundaries` |
+| 大型迁移、兼容期、vertical slice 排序 | `incremental-implementation` | 协作 `test-driven-development` |
+| 新行为或 baseline 实现 | `test-driven-development` | 实际失败时转 `systematic-debugging` |
+| 实际失败、回归、超时或 pipeline 错误 | `systematic-debugging` | 需要回归测试时协作 TDD |
+| diff、PR/MR、Gate 3 | `code-review-and-quality` | 发现真实缺陷时转 debugging |
+| branch、commit、version、tag、CHANGELOG | `git-workflow-and-versioning` | 发布自动化时协作 CI/CD |
+| pipeline、artifact、部署健康、Gate 4 | `ci-cd-and-automation` | 失败时转 debugging |
 
-不要因为出现 service、repository、CRUD 或 interface 这些词就自动激活 DDD 或完整架构流程。详细的 primary、secondary、forbidden 和升级条件见 routing matrix。
+完整的 primary、secondary、forbidden 和升级条件见 [routing-matrix.md](skills/engineering-philosophy/references/routing-matrix.md)。在 Codex 中可以显式调用，例如 `$architecture-boundaries`、`$ddd-lite`、`$requirement-engineering`；其他 Agent 可以根据 description 自动触发 specialist Skill。
 
-## Usage Examples
+## Migrating from v0.2.x
 
-中文请求：
+v0.3.0 只重命名两个 Skill，保持总数为 11：
 
-~~~text
-这个 Go service 直接创建 postgres client，repository 需要加 interface 吗？
-~~~
+| v0.2.x | v0.3.0 |
+| --- | --- |
+| `spec-driven-development` | `requirement-engineering` |
+| `planning-and-task-breakdown` | `change-planning` |
 
-首先使用 architecture-boundaries，判断是否存在真实技术边界、谁拥有 contract、依赖如何注入；不要因为 service 或 repository 这些名字自动引入 DDD。
+先移除旧 Skill，再从新仓库身份安装：
 
-~~~text
-订单状态规则应该放 aggregate 还是 application service？
-~~~
+```sh
+npx skills@latest remove spec-driven-development planning-and-task-breakdown \
+  --global \
+  --yes
 
-首先使用 ddd-lite，先识别业务不变量和一致性边界；只有问题进一步涉及 Adapter 或依赖方向时才协作 architecture-boundaries。
+npx skills@latest add hugo2lee/engineering-philosophy \
+  --skill '*' \
+  --global \
+  --agent codex \
+  --agent cline \
+  --yes
+```
 
-~~~text
-这个 bug 先别改，先帮我定位 timeout 的根因。
-~~~
-
-首先使用 systematic-debugging，建立稳定复现并保留证据；不要用随机修改或大规模架构重构替代调查。
-
-~~~text
-需求比较复杂但已经明确，先帮我拆任务并标出依赖。
-~~~
-
-首先使用 planning-and-task-breakdown；如果涉及迁移或需要旧新路径并存，再进入 incremental-implementation。
-
-## Global vs Project Rules
-
-全局哲学保留跨项目、可验证、经过重复验证的工程原则。以下内容应放在项目规则、项目级 Skill 或 ADR 中：
-
-- Go、C++ 或其他项目的具体版本；
-- 数据库、消息系统、云服务和框架选型；
-- 公司目录结构和命名规范；
-- GitHub/GitLab 分支策略及 pipeline 命令；
-- 特定领域的 Aggregate、Entity 或状态模型；
-- 某项目强制使用的测试框架。
-
-规则等级统一为 MUST、SHOULD、CONDITIONAL。经验只有在 Observation → Repeated Pattern → Candidate Rule → Eval Case → Real-project Validation → Global Rule 之后才适合晋升为全局规则。
-
-## Update
-
-更新已安装的 Skill：
-
-~~~sh
-npx skills update -g -y
-~~~
-
-如果只想更新本仓库的某一个 Skill：
-
-~~~sh
-npx skills update architecture-boundaries -g -y
-~~~
-
-更新后重新运行 npx skills ls -g，并检查 ~/.agents/skills 下的 SKILL.md。
-
-## Contributor Workflow
-
-普通用户不需要使用仓库内的 copy-based deploy 工具。维护者在本地修改 Skill 时可以按以下顺序工作：
-
-~~~sh
-scripts/validate.sh
-scripts/smoke-test-npx.sh
-scripts/deploy.sh --dry-run
-scripts/deploy.sh
-~~~
-
-deploy.sh 是 contributor/maintainer local development helper，不是普通用户安装入口。它默认将 Codex 和 Cline 的本仓库 Skill 复制到 ~/.agents/skills，将 OpenClaw 复制到 ~/.openclaw/skills；通过 marker、ownership 检查、--dry-run 和 --force 保护其他 Skill，不修改 Codex system Skill。若需要兼容旧的个人布局，可以显式传入 --cline-root、--codex-root 或 --openclaw-root。
+这里使用的是当前 CLI 已验证的 `remove [skills...] --global --yes` 语法。若 GitHub 仓库改名尚未完成，短时间内可以使用旧地址 `hugo2lee/agent-skills`；正式文档和后续安装目标统一使用 `hugo2lee/engineering-philosophy`。迁移细节见 [v0.3.0 skill rename migration](docs/migrations/v0.3.0-skill-renames.md)。
 
 ## Validation
 
-仓库验证由两层组成：
+维护者可以运行：
 
-1. Agent Skills 标准层：skills-ref validate；
-2. 仓库层：11 个 Skill、metadata/version、references、eval IDs、routing cases、语言分布、negative routing 和 npx smoke test。
+```sh
+scripts/validate.sh
+scripts/smoke-test-npx.sh
+scripts/deploy.sh --dry-run
+git diff --check
+```
 
-本地依赖安装示例。官方 reference source 的命令名是 skills-ref；当前 PyPI 包可能暴露为 agentskills，scripts/validate.sh 兼容这两个命令名：
+验证器会读取根目录 `VERSION`，检查 11 个 Skill 的 frontmatter、`agents/openai.yaml`、metadata version、references 链接、独立 eval、routing eval、30 个 lifecycle cases 和文档版本一致性。PyYAML 与 Agent Skills reference validator 是验证依赖；例如：
 
-~~~sh
+```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install "PyYAML>=6,<7" "skills-ref==0.1.1"
 scripts/validate.sh
-~~~
+```
 
-GitHub Actions 在 push 和 pull_request 上自动执行 validation、shellcheck，以及使用临时 HOME 的 npx discovery/installation smoke test。CI 不会写入维护者机器的 Agent 配置。
+GitHub Actions 会在 push 和 pull request 上自动运行 validation、ShellCheck 和临时 HOME 下的 npx discovery/installation smoke test。CI 不会写入维护者机器的 Agent 配置。
 
 ## Releases
 
-版本发布需要让以下内容保持一致：
+当前工作是 v0.3.0 的实现分支，按计划不会在本次变更中创建 `v0.3.0` Tag 或 GitHub Release。旧的 `v0.1.0`、`v0.2.0` 和 `v0.2.1` 保持不可变。
 
-- 每个 Skill 的 metadata.version；
-- README 和 CHANGELOG；
-- Git commit；
-- annotated tag；
-- GitHub Release；
-- 发布后的 npx 安装验证。
+完成并合并到发布分支、确认 CI 通过后，维护者可以在最终 release commit 上执行：
 
-维护者发布步骤见 docs/release-checklist.md。版本变更见 CHANGELOG.md，参考来源和许可证边界见 ATTRIBUTION.md。
+```sh
+git tag -a v0.3.0 <release-commit> \
+  -m "v0.3.0 — Evidence-Driven Feature Lifecycle"
+git push origin v0.3.0
+```
 
-### Automated GitHub Release
-
-推送符合 `vMAJOR.MINOR.PATCH` 格式的 Tag 后，GitHub Actions 会自动执行发布流程：
-
-1. 在该 Tag 对应的提交上运行全部 validation、ShellCheck 和 npx smoke test；
-2. 只有 `validate` job 成功时，才运行 `Publish GitHub Release` job；
-3. 使用 GitHub 内置 `GITHUB_TOKEN` 验证远端 Tag 并创建正式 GitHub Release；
-4. 使用 GitHub 自动生成 release notes，并将该版本标记为 latest。
-
-因此，维护者只需要创建并推送一个 annotated Tag：
-
-~~~sh
-git tag -a v0.2.1 <release-commit> -m "v0.2.1 — CI-gated automated release"
-git push origin v0.2.1
-~~~
-
-不需要手动打开 GitHub Release 页面，也不需要个人 access token。`v0.2.0` Tag 在自动发布 workflow 加入之前已经存在，因此不会被历史性重放；自动发布从后续符合格式的新 Tag 开始生效。若 job 报告 `Resource not accessible by integration`，在仓库的 Settings → Actions → General → Workflow permissions 中允许 workflow 使用 read and write permissions，然后重新推送一个新的版本 Tag。
+仓库的 GitHub Actions 可以在符合 `vMAJOR.MINOR.PATCH` 的新 Tag 上自动执行验证并创建 Release；这次计划只准备源码和验证，不提前发布。发布清单见 [docs/release-checklist.md](docs/release-checklist.md)。
 
 ## Design Principle
 

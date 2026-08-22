@@ -1,0 +1,567 @@
+# Evidence-driven lifecycle cases. These are stable behavior contracts for a
+# future evaluator; they do not invoke an Agent API or prescribe one answer's
+# prose shape.
+- id: LC-REQ-001
+  category: requirement-clarification
+  language: zh
+  prompt: >
+    产品说“把通知做得更好”，但没有说明用户、触发时机、成功标准和不做什么。
+    请先整理 Requirement Contract，不要直接设计消息队列。
+  context: A notification capability already exists and the request is intentionally vague.
+  expected_primary: requirement-engineering
+  allowed_secondary: []
+  expected_decisions:
+    - Ask for observable behavior, error behavior, acceptance criteria, and non-goals.
+    - Keep architecture selection deferred until the behavior is clear.
+  forbidden:
+    - change-planning
+    - architecture-boundaries
+    - ci-cd-and-automation
+  acceptance: The response identifies the missing product decisions and does not invent infrastructure.
+
+- id: LC-REQ-002
+  category: requirement-clarification
+  language: zh
+  prompt: >
+    用户要求“支持批量导入”，但没有定义重复记录、部分失败、最大批量和返回结果。
+    请说明哪些问题必须在 Gate 1 前确认。
+  context: The import endpoint does not yet have a public contract.
+  expected_primary: requirement-engineering
+  allowed_secondary: []
+  expected_decisions:
+    - Define input limits, duplicate semantics, partial failure, result shape, and non-goals.
+    - Surface decisions that materially affect compatibility or data behavior.
+  forbidden:
+    - test-driven-development
+    - change-planning
+  acceptance: The answer gives a proportional contract checklist and identifies user decision gates.
+
+- id: LC-REQ-003
+  category: requirement-reconciliation
+  language: en
+  prompt: >
+    A new request says expired invitations should be accepted, but the released contract
+    and executable baseline reject them. Reconcile the request before proposing code.
+  context: The user has not said whether the old behavior should remain compatible.
+  expected_primary: requirement-engineering
+  allowed_secondary:
+    - engineering-philosophy
+  expected_decisions:
+    - Classify the request as a conflict or replacement candidate.
+    - Ask the user whether released behavior is intentionally replaced.
+    - Identify the affected baseline and release notes.
+  forbidden:
+    - test-driven-development
+    - architecture-boundaries
+  acceptance: No implementation is proposed as if the conflict were already resolved.
+
+- id: LC-REQ-004
+  category: requirement-reconciliation
+  language: zh
+  prompt: >
+    需求是“新增导出订单 CSV”，搜索后发现已有一个后台导出服务和测试。请判断这是
+    新功能、重复功能还是兼容扩展，并给出下一步证据。
+  context: The existing service may already provide the requested capability under another entry point.
+  expected_primary: requirement-engineering
+  allowed_secondary:
+    - change-planning
+  expected_decisions:
+    - Compare existing implemented capability, contracts, and released behavior.
+    - Classify as duplicate, overlap, or compatible extension based on evidence.
+    - Prefer reuse over parallel implementation.
+  forbidden:
+    - ddd-lite
+    - architecture-boundaries
+  acceptance: The answer does not assume that the request requires a new service.
+
+- id: LC-REQ-005
+  category: requirement-reconciliation
+  language: en
+  prompt: >
+    Add an optional locale field to an existing profile response without changing the
+    meaning of existing fields. Decide whether this is a compatible extension and what
+    baselines must remain green.
+  context: Existing clients omit the new field and the response contract is versioned.
+  expected_primary: requirement-engineering
+  allowed_secondary:
+    - test-driven-development
+  expected_decisions:
+    - Classify the request as a compatible extension if omission preserves old behavior.
+    - Define old-client compatibility and new acceptance criteria.
+    - Protect the existing service and inbound mapping baselines.
+  forbidden:
+    - ddd-lite
+  acceptance: The response preserves existing behavior and names the new observable behavior.
+
+- id: LC-REQ-006
+  category: user-decision-gate
+  language: zh
+  prompt: >
+    旧接口遇到重复支付会返回冲突，新需求希望重复请求直接返回第一次成功结果。
+    请列出用户决策选项、兼容影响和记录方式。
+  context: Idempotency behavior affects public clients, persistence, and the release baseline.
+  expected_primary: requirement-engineering
+  allowed_secondary:
+    - engineering-philosophy
+  expected_decisions:
+    - Present preserve-conflict versus idempotent-replay alternatives.
+    - Explain data, retry, and client compatibility trade-offs.
+    - Record the chosen option and rejected alternative in the change record.
+  forbidden:
+    - test-driven-development
+    - ci-cd-and-automation
+  acceptance: The answer asks for the material product decision instead of guessing.
+
+- id: LC-REPO-007
+  category: repository-analysis
+  language: zh
+  prompt: >
+    需求已经批准。请先检查仓库的入口、现有 application service、存储 adapter、测试、
+    CI 和发布路径，再给出改动影响面，不要马上拆任务。
+  context: The feature crosses API, storage, and delivery automation.
+  expected_primary: change-planning
+  allowed_secondary:
+    - requirement-engineering
+  expected_decisions:
+    - Inventory current entry points, capabilities, boundaries, tests, and automation.
+    - Record concrete paths or commands and separate facts from hypotheses.
+  forbidden:
+    - test-driven-development
+    - git-workflow-and-versioning
+  acceptance: The response produces repository evidence before an implementation plan.
+
+- id: LC-REPO-008
+  category: existing-capability-reuse
+  language: en
+  prompt: >
+    The feature asks for a new customer lookup service, but repository analysis finds an
+    existing capability with the same query and only a different transport mapping. Plan
+    the change around reuse.
+  context: The existing capability is covered by service and adapter tests.
+  expected_primary: change-planning
+  allowed_secondary:
+    - architecture-boundaries
+  expected_decisions:
+    - Reuse the existing service and identify the smallest mapping or boundary change.
+    - Avoid a parallel service or duplicate repository.
+  forbidden:
+    - ddd-lite
+  acceptance: The plan names the reusable capability and limits the change to the actual delta.
+
+- id: LC-REPO-009
+  category: repository-analysis
+  language: en
+  prompt: >
+    A feature updates order status in a real database. Before planning, identify the
+    transaction, constraint, migration, mapping, and integration-test paths that can
+    affect the behavior.
+  context: An in-memory fake currently covers the application service but not the storage adapter.
+  expected_primary: change-planning
+  allowed_secondary:
+    - architecture-boundaries
+  expected_decisions:
+    - Distinguish service behavior evidence from persistence integration evidence.
+    - Inspect real adapter and schema behavior before claiming the feature is covered.
+  forbidden:
+    - ci-cd-and-automation
+    - git-workflow-and-versioning
+  acceptance: The response includes persistence impact and does not equate a service unit test with storage proof.
+
+- id: LC-REPO-010
+  category: repository-analysis
+  language: mixed
+  prompt: >
+    Before changing a webhook feature, inspect inbound mapping, application commands,
+    outbound provider calls, retries, CI, and release checks. Keep the inventory focused
+    on change impact, not every file in the repository.
+  context: The repository has HTTP and message-queue entry points for the same capability.
+  expected_primary: change-planning
+  allowed_secondary:
+    - architecture-boundaries
+    - ci-cd-and-automation
+  expected_decisions:
+    - Trace the behavior through inbound, service, outbound, and delivery boundaries.
+    - Record only relevant evidence and unknowns.
+  forbidden:
+    - ddd-lite
+  acceptance: The analysis is scoped and covers all affected boundary types.
+
+- id: LC-ARCH-011
+  category: architecture-pressure
+  language: en
+  prompt: >
+    Three releases changed the same payment provider translation in three callers, and
+    each change caused a different observable defect. Derive the architectural requirement
+    and the smallest enabler now.
+  context: The repeated defect is documented in incidents and regression tests.
+  expected_primary: architecture-boundaries
+  allowed_secondary:
+    - change-planning
+  expected_decisions:
+    - Connect repeated change pressure to a provider-isolating boundary.
+    - Prefer a focused consumer-owned contract and adapter over a generic framework.
+    - Define verification at the provider contract seam.
+  forbidden:
+    - ddd-lite
+  acceptance: The design names evidence, requirement, enabler, and verification without overbuilding.
+
+- id: LC-ARCH-012
+  category: overengineering-negative
+  language: zh
+  prompt: >
+    当前只有一个稳定的邮件 provider，产品说未来也许会支持短信。请判断现在是否应该
+    先创建 ProviderFactory、十几个 interface 和完整插件系统。
+  context: No current change pressure or second provider exists.
+  expected_primary: architecture-boundaries
+  allowed_secondary: []
+  expected_decisions:
+    - Defer speculative abstractions until demonstrated pressure exists.
+    - Keep the concrete type inside the current boundary while preserving a future seam if cheap and real.
+  forbidden:
+    - ddd-lite
+    - change-planning
+  acceptance: The answer rejects architecture by future possibility alone.
+
+- id: LC-ARCH-013
+  category: architecture-pressure
+  language: zh
+  prompt: >
+    同一个业务用例被 HTTP 和 Kafka 调用，两个入口各自把领域错误翻译成不同的输出，
+    已经出现用户可见的不一致。请确定最小架构 enabler 和验证位置。
+  context: The core service behavior is the same; the defect is in boundary translation.
+  expected_primary: architecture-boundaries
+  allowed_secondary:
+    - test-driven-development
+    - systematic-debugging
+  expected_decisions:
+    - Identify inbound mapping as the pressured boundary.
+    - Centralize only the necessary contract or mapping responsibility.
+    - Add mapping regression coverage without duplicating all service tests.
+  forbidden:
+    - ddd-lite
+  acceptance: The response protects the real boundary and avoids a broad transport rewrite.
+
+- id: LC-ARCH-014
+  category: domain-routing
+  language: zh
+  prompt: >
+    订单只有在草稿状态且总金额大于零时才能确认。请先识别这是业务不变量还是技术边界，
+    并说明应该路由到哪里。
+  context: The question is about ownership of a business rule, not database wiring.
+  expected_primary: ddd-lite
+  allowed_secondary:
+    - requirement-engineering
+  expected_decisions:
+    - Identify the invariant and its lifecycle owner.
+    - Route domain modeling to ddd-lite, not architecture-boundaries merely because a service exists.
+  forbidden:
+    - architecture-boundaries
+    - ci-cd-and-automation
+  acceptance: The response distinguishes business pressure from technical dependency pressure.
+
+- id: LC-PLAN-015
+  category: change-planning
+  language: zh
+  prompt: >
+    需求已批准，改动涉及 API、订单规则、数据库迁移、回归测试和 CI，且旧客户端必须继续工作。
+    请输出带依赖、风险、检查点和完成条件的 Change Plan。
+  context: Repository analysis has already identified the relevant files and current behavior.
+  expected_primary: change-planning
+  allowed_secondary:
+    - incremental-implementation
+    - ddd-lite
+  expected_decisions:
+    - Define bounded vertical slices and ordering.
+    - Include compatibility, migration, baseline, and verification conditions.
+    - Keep non-goals explicit.
+  forbidden:
+    - requirement-engineering
+  acceptance: Every task has a bounded scope, dependency, and verifiable completion condition.
+
+- id: LC-PLAN-016
+  category: dependencies-and-risks
+  language: en
+  prompt: >
+    A migration depends on a schema change, a dual-read period, a feature flag, and a
+    rollback path. Turn these into executable dependencies, risks, checkpoints, and stop conditions.
+  context: Old and new callers must coexist for at least one release.
+  expected_primary: change-planning
+  allowed_secondary:
+    - incremental-implementation
+    - ci-cd-and-automation
+  expected_decisions:
+    - Classify data, behavioral, operational, and decision dependencies.
+    - State evidence, owner, checkpoint, and removal condition for each material risk.
+  forbidden:
+    - ddd-lite
+  acceptance: The plan is actionable and does not merely list generic risks.
+
+- id: LC-PLAN-017
+  category: business-and-architecture-slice
+  language: mixed
+  prompt: >
+    The first user-visible slice adds “pause subscription”, but the current code has no
+    safe boundary around billing provider calls. Plan Business Value + Just-enough
+    Architecture + Verification in one runnable slice.
+  context: The provider call is currently made directly from the HTTP handler.
+  expected_primary: incremental-implementation
+  allowed_secondary:
+    - architecture-boundaries
+    - test-driven-development
+  expected_decisions:
+    - Include the pause behavior and only the provider seam needed to verify it safely.
+    - Keep the slice runnable and defer unrelated billing abstractions.
+  forbidden:
+    - ddd-lite
+    - ci-cd-and-automation
+  acceptance: The slice connects user value to the minimum architectural enabler and tests.
+
+- id: LC-PLAN-018
+  category: migration-sequencing
+  language: zh
+  prompt: >
+    要把旧库存存储迁移到新存储，旧调用方仍在线。请设计旧路径、新路径、双写或双读、
+    验证、切换和移除条件，保持每一步可运行。
+  context: The new storage schema is not yet proven compatible.
+  expected_primary: incremental-implementation
+  allowed_secondary:
+    - change-planning
+    - systematic-debugging
+  expected_decisions:
+    - Establish safety nets before migration.
+    - Sequence compatible vertical slices with explicit observation and removal conditions.
+    - Avoid mixing an unbounded rewrite with a new feature.
+  forbidden:
+    - ddd-lite
+  acceptance: The plan identifies old/new path relationships and safe rollback or stop points.
+
+- id: LC-TDD-019
+  category: behavior-implementation
+  language: en
+  prompt: >
+    Implement the rule that an empty order cannot be submitted. Start with one failing
+    behavior test, write the minimum implementation, then refactor while green.
+  context: The requirement is approved and the current implementation accepts empty orders.
+  expected_primary: test-driven-development
+  allowed_secondary:
+    - ddd-lite
+  expected_decisions:
+    - Preserve the red failure as evidence before implementation.
+    - Test the public behavior rather than private helper calls.
+    - Add a regression or release baseline entry if the behavior is release-worthy.
+  forbidden:
+    - architecture-boundaries
+    - ci-cd-and-automation
+  acceptance: The response describes a focused Red-Green-Refactor loop and does not optimize for coverage alone.
+
+- id: LC-TDD-020
+  category: service-behavior-baseline
+  language: zh
+  prompt: >
+    一个已发布的服务行为是“重复请求返回同一个业务结果”。请定义 Service Behavior Baseline，
+    区分输入、输出、错误、状态变化和重要副作用。
+  context: The service is transport-independent and clients rely on idempotency.
+  expected_primary: test-driven-development
+  allowed_secondary:
+    - engineering-philosophy
+  expected_decisions:
+    - Define observable business behavior and error semantics at the service boundary.
+    - Avoid specifying private call order or a particular database implementation.
+  forbidden:
+    - architecture-boundaries
+    - ci-cd-and-automation
+  acceptance: The baseline can detect behavior weakening without coupling to implementation details.
+
+- id: LC-TDD-021
+  category: persistence-baseline
+  language: en
+  prompt: >
+    The service test passes, but a real database adapter maps a uniqueness violation to a
+    generic 500. Add the persistence integration baseline that the service test cannot prove.
+  context: The adapter uses a real test database and the released contract exposes a conflict error.
+  expected_primary: test-driven-development
+  allowed_secondary:
+    - systematic-debugging
+    - architecture-boundaries
+  expected_decisions:
+    - Test real mapping, constraint, transaction, and error behavior at the persistence boundary.
+    - Keep the service baseline and persistence baseline distinct.
+  forbidden:
+    - ddd-lite
+    - git-workflow-and-versioning
+  acceptance: The proposed test would fail if the real adapter regressed while the service unit test stayed green.
+
+- id: LC-TDD-022
+  category: outbound-baseline
+  language: en
+  prompt: >
+    A provider timeout is currently retried with a non-idempotent request. Define an
+    outbound contract baseline covering request mapping, timeout, retry, and provider error semantics.
+  context: The provider contract is documented and the request may cause an external side effect.
+  expected_primary: test-driven-development
+  allowed_secondary:
+    - architecture-boundaries
+    - systematic-debugging
+  expected_decisions:
+    - Protect the port-adapter-provider behavior and idempotency risk.
+    - Do not replace the contract test with a mock that only checks a method call.
+  forbidden:
+    - ddd-lite
+    - ci-cd-and-automation
+  acceptance: The baseline distinguishes timeout, retry, provider response, and unsafe duplication behavior.
+
+- id: LC-TDD-023
+  category: inbound-baseline
+  language: zh
+  prompt: >
+    HTTP 层把领域冲突错误映射成 200，消息队列入口却映射成 retry。请增加 Inbound Mapping Baseline，
+    但不要在两个入口重复完整业务测试。
+  context: Both transports call the same application service.
+  expected_primary: test-driven-development
+  allowed_secondary:
+    - architecture-boundaries
+  expected_decisions:
+    - Test request-to-command and result/error-to-transport mapping at each inbound boundary.
+    - Keep business invariant coverage in the service baseline.
+  forbidden:
+    - ddd-lite
+    - ci-cd-and-automation
+  acceptance: The test scope is mapping-specific and avoids duplicating all service behavior.
+
+- id: LC-DEBUG-024
+  category: regression-debugging
+  language: zh
+  prompt: >
+    发布后订单确认偶发丢失，日志显示数据库提交成功但事件没有发出。请按复现、证据、假设、
+    最小实验、修复和回归验证调查，不要先引入事件总线重构。
+  context: The failure is intermittent and affects a released behavior baseline.
+  expected_primary: systematic-debugging
+  allowed_secondary:
+    - test-driven-development
+    - ci-cd-and-automation
+  expected_decisions:
+    - Establish a timeline and correlate transaction and outbound evidence.
+    - Form falsifiable hypotheses and change one variable at a time.
+    - Add a regression test and protect the released baseline after the fix.
+  forbidden:
+    - architecture-boundaries
+    - ddd-lite
+  acceptance: The response does not claim resolution without reproducible or adequately documented evidence.
+
+- id: LC-DEBUG-025
+  category: baseline-protection
+  language: en
+  prompt: >
+    CI reports that the released persistence baseline now fails after a refactor. No user
+    decision authorized a behavior change. Decide what to do before changing the baseline.
+  context: The refactor changed adapter mapping but the requirement is unchanged.
+  expected_primary: systematic-debugging
+  allowed_secondary:
+    - test-driven-development
+    - code-review-and-quality
+  expected_decisions:
+    - Treat the failure as an implementation or test setup regression.
+    - Investigate and fix the smallest cause; do not weaken or delete the baseline.
+    - Re-run adjacent verification before review.
+  forbidden:
+    - git-workflow-and-versioning
+    - architecture-boundaries
+  acceptance: The response preserves the executable release contract absent authorized change.
+
+- id: LC-REVIEW-026
+  category: review-traceability
+  language: en
+  prompt: >
+    Review a diff where the approved contract says “return 409 on duplicate”, the plan
+    says to reuse the existing conflict mapper, but the implementation returns 200 and adds
+    a new mapper. Identify the Gate 3 findings.
+  context: The service test was changed to expect 200 without a recorded user decision.
+  expected_primary: code-review-and-quality
+  allowed_secondary:
+    - requirement-engineering
+    - systematic-debugging
+  expected_decisions:
+    - Flag requirement mismatch, unapproved behavior change, scope/architecture drift, and weakened evidence.
+    - Require reconciliation before approval.
+  forbidden:
+    - git-workflow-and-versioning
+    - ci-cd-and-automation
+  acceptance: The review treats silent drift as blocking and cites contract, plan, diff, and baseline evidence.
+
+- id: LC-REVIEW-027
+  category: plan-evolution
+  language: zh
+  prompt: >
+    实现时发现原计划的 adapter 不支持事务，必须改成现有 transaction port。请判断这是否允许，
+    以及 Review Gate 需要看到什么记录。
+  context: The observable requirement is unchanged and the repository evidence is documented.
+  expected_primary: code-review-and-quality
+  allowed_secondary:
+    - change-planning
+    - architecture-boundaries
+  expected_decisions:
+    - Allow plan evolution when the Feature Change Record records evidence, reason, impact, and verification.
+    - Re-check affected architecture and baseline conditions.
+  forbidden:
+    - systematic-debugging
+    - git-workflow-and-versioning
+  acceptance: The answer distinguishes healthy evidence-driven evolution from silent drift.
+
+- id: LC-REVIEW-028
+  category: silent-drift-negative
+  language: zh
+  prompt: >
+    开发者没有更新需求记录，把“失败时重试”改成“失败时忽略”，并说所有单元测试都通过了。
+    请判断能否通过 Gate 3。
+  context: The behavior affects an outbound contract and released error semantics.
+  expected_primary: code-review-and-quality
+  allowed_secondary:
+    - requirement-engineering
+    - ci-cd-and-automation
+  expected_decisions:
+    - Block approval for silent behavior drift and missing reconciliation/baseline update.
+    - Do not treat green unit tests as sufficient evidence.
+  forbidden:
+    - git-workflow-and-versioning
+  acceptance: The response refuses Gate 3 until the behavior decision and evidence are reconciled.
+
+- id: LC-RELEASE-029
+  category: artifact-gate
+  language: en
+  prompt: >
+    The release workflow built artifact A, tested artifact A, but the deployment step points
+    to artifact B from a different commit. Decide the Gate 4 result and the required action.
+  context: Both artifacts have the same human-readable version but different source revisions.
+  expected_primary: ci-cd-and-automation
+  allowed_secondary:
+    - systematic-debugging
+    - git-workflow-and-versioning
+  expected_decisions:
+    - Stop release because artifact identity is not traceable.
+    - Preserve logs and verify the exact artifact before retrying.
+    - Do not infer correctness from matching version text alone.
+  forbidden:
+    - ddd-lite
+    - test-driven-development
+  acceptance: The response applies an artifact-identity stop condition.
+
+- id: LC-RELEASE-030
+  category: release-readiness
+  language: mixed
+  prompt: >
+    Prepare Gate 4 for a feature that has passing service and persistence baselines,
+    verified artifact identity, deployment health checks, and a documented rollback path.
+    Also state what remains uncertain and what a green CI run does not prove.
+  context: The release is intended to be published after review approval.
+  expected_primary: ci-cd-and-automation
+  allowed_secondary:
+    - git-workflow-and-versioning
+    - code-review-and-quality
+  expected_decisions:
+    - Confirm all required release evidence and stop conditions.
+    - Distinguish delivery verification from complete business correctness.
+    - Preserve residual risk and operational uncertainty in the handoff.
+  forbidden:
+    - ddd-lite
+    - requirement-engineering
+  acceptance: The answer is a proportional release checklist with evidence, not a claim that CI proves everything.
