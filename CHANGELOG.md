@@ -2,14 +2,7 @@
 
 ## Unreleased
 
-### Changed
-
-- Future stable `vMAJOR.MINOR.PATCH` tags remain eligible for CI-gated GitHub Release publishing after validation succeeds.
-- The v0.3.0 source work is intentionally not tagged or released by this change.
-
 ## v0.3.0 - Evidence-Driven Feature Lifecycle
-
-> Prepared on `feat/v0.3-evidence-driven-lifecycle`; the `v0.3.0` Git tag and GitHub Release are pending the final release commit and CI approval.
 
 ### Added
 

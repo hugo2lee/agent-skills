@@ -220,17 +220,23 @@ GitHub Actions 会在 push 和 pull request 上自动运行 validation、ShellCh
 
 ## Releases
 
-当前工作是 v0.3.0 的实现分支，按计划不会在本次变更中创建 `v0.3.0` Tag 或 GitHub Release。旧的 `v0.1.0`、`v0.2.0` 和 `v0.2.1` 保持不可变。
+v0.3.0 is the current stable release:
 
-完成并合并到发布分支、确认 CI 通过后，维护者可以在最终 release commit 上执行：
-
-```sh
-git tag -a v0.3.0 <release-commit> \
-  -m "v0.3.0 — Evidence-Driven Feature Lifecycle"
-git push origin v0.3.0
+```text
+v0.3.0 — Evidence-Driven Feature Lifecycle
 ```
 
-仓库的 GitHub Actions 可以在符合 `vMAJOR.MINOR.PATCH` 的新 Tag 上自动执行验证并创建 Release；这次计划只准备源码和验证，不提前发布。发布清单见 [docs/release-checklist.md](docs/release-checklist.md)。
+Stable releases use annotated `vMAJOR.MINOR.PATCH` tags. A pushed stable tag runs the repository validation workflow first, and the GitHub Release is published only after validation succeeds. The released `v0.1.0`, `v0.2.0`, and `v0.2.1` tags remain immutable.
+
+维护者发布后续版本时，可以在已通过 master CI 的最终 release commit 上执行：
+
+```sh
+git tag -a vX.Y.Z <release-commit> \
+  -m "vX.Y.Z — <release title>"
+git push origin vX.Y.Z
+```
+
+仓库的 GitHub Actions 会对符合 `vMAJOR.MINOR.PATCH` 的新 Tag 自动执行验证，并在验证成功后创建 Release。发布检查项见 [docs/release-checklist.md](docs/release-checklist.md)。
 
 ## Design Principle
 
