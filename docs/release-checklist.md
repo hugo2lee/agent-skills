@@ -10,11 +10,12 @@ Use this checklist for a versioned Skill Suite release. The repository is distri
 - [ ] Confirm `knowledge-compilation` is the single new top-level Skill; do not split knowledge governance into adjacent duplicate Skills.
 - [ ] Confirm Source, Reference, Evidence, Decision, Generated Artifact, and Skill classification is documented.
 - [ ] Confirm provenance, canonical-source precedence, conflict surfacing, redaction, write scope, and project/global promotion gates are documented.
-- [ ] Confirm candidate, active, deprecated, and archived lifecycle semantics are documented and generation is not activation.
-- [ ] Confirm `skills/registry.yaml` and the filesystem Skill set agree, with no fixed 12-name validator list.
-- [ ] Add or update specialist routing cases and at least 8 `knowledge-compilation` cases plus 30 knowledge lifecycle cases.
+- [ ] Confirm candidate, active, deprecated, and archived lifecycle semantics are documented, generation is not activation, and candidates are physically isolated from automatic active-path discovery.
+- [ ] Confirm `skills/registry.yaml`, the filesystem discovery set, and the published active set agree; deploy and smoke tests must use the shared registry-driven helper, not a fixed Skill list.
+- [ ] Add or update specialist routing cases, at least 8 `knowledge-compilation` cases, 31 knowledge lifecycle cases, and the required lifecycle categories including `frontmatter-spec`.
 - [ ] Confirm `engineering-philosophy` contains no project-specific paths, facts, credentials, or local project rules.
 - [ ] Do not create a universal crawler, bot, RAG platform, automatic global promotion, or project-specific executor in v0.4.0.
+- [ ] Validate the generated Skill sidecar schema, registry schema fixtures, invalid promotion fixture, and `skills-ref` generated Skill fixture before approval.
 - [ ] Do not create the v0.4.0 tag or GitHub Release until the feature branch is approved and all gates pass.
 
 ## Historical v0.3.0 scope
@@ -34,7 +35,7 @@ Use this checklist for a versioned Skill Suite release. The repository is distri
 - [ ] Confirm `requirement-engineering` specialist evals use `REQ-*` IDs and v0.3 semantic cases.
 - [ ] Confirm `change-planning` specialist evals use `CHG-*` IDs and v0.3 semantic cases.
 - [ ] Confirm README, deploy, and npx smoke-test path terminology distinguishes native Agent paths from current npx CLI behavior.
-- [ ] Do not create a C++ Skill, additional top-level Skill, v0.3.0 tag, or GitHub Release until the release commit is approved.
+- [ ] Preserve the already released v0.3.0 tag and history; do not rewrite it while validating v0.4.0.
 
 ## Before committing
 
@@ -48,7 +49,7 @@ Use this checklist for a versioned Skill Suite release. The repository is distri
 
 ## Validation
 
-- [ ] Install PyYAML and the `skills-ref` reference validator.
+- [ ] Install PyYAML, `jsonschema>=4,<5`, and the `skills-ref` reference validator.
 - [ ] Run `scripts/validate.sh`; confirm the registry-discovered Skill set, metadata, references, routing, lifecycle evals, and version consistency pass.
 - [ ] Run `shellcheck scripts/*.sh`.
 - [ ] Run `bash -n scripts/*.sh`.
@@ -65,15 +66,15 @@ Use this checklist for a versioned Skill Suite release. The repository is distri
 - [ ] Make implementation commits atomic and explain behavior changes.
 - [ ] Confirm `README.md`, `CHANGELOG.md`, `VERSION`, all Skill metadata, and the intended tag use the same version.
 - [ ] Review the exact commit and CI result before merging to the release branch.
-- [ ] Keep `v0.1.0`, `v0.2.0`, and `v0.2.1` immutable.
-- [ ] Create an annotated `v0.3.0` tag only on the approved release commit.
+- [ ] Keep `v0.1.0`, `v0.2.0`, `v0.2.1`, and `v0.3.0` immutable.
+- [ ] Create an annotated `v0.4.0` tag only on the approved release commit.
 
 Suggested release command after the final commit and successful CI:
 
 ```sh
-git tag -a v0.3.0 <release-commit> \
-  -m "v0.3.0 — Evidence-Driven Feature Lifecycle"
-git push origin v0.3.0
+git tag -a v0.4.0 <release-commit> \
+  -m "v0.4.0 — Continuous Knowledge Compilation"
+git push origin v0.4.0
 ```
 
 ## Repository identity

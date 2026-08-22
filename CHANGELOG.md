@@ -8,15 +8,17 @@
 
 - Added the `knowledge-compilation` Skill as the twelfth top-level Skill for repository evidence discovery, artifact classification, knowledge reconciliation, provenance, candidate/active lifecycle, registration, and retirement.
 - Added the generic Knowledge Compilation Lifecycle and the Source, Reference, Evidence, Decision, Generated Artifact, and Skill taxonomy.
-- Added candidate promotion, generated metadata, canonical-source precedence, redaction, project/global promotion, and registry contracts.
-- Added machine-validatable knowledge registry and generated Skill metadata schemas.
-- Added 12 knowledge-compilation specialist eval cases and 30 knowledge lifecycle eval cases covering owner reuse, Skill explosion, provenance, source conflicts, redaction, write scope, and project/global leakage.
+- Added candidate promotion, generated Skill sidecar records, canonical-source precedence, redaction, project/global promotion, and registry contracts.
+- Added machine-validatable knowledge registry and generated Skill record sidecar schemas with executable Draft 2020-12 validation.
+- Added 12 knowledge-compilation specialist eval cases and 31 knowledge lifecycle eval cases covering owner reuse, Skill explosion, provenance, source conflicts, redaction, write scope, candidate isolation, frontmatter compatibility, and project/global leakage.
 
 ### Changed
 
 - Bumped all 12 Skill metadata versions to `0.4.0`.
-- Added `skills/registry.yaml` as the intended published Skill surface and changed validation/smoke discovery to derive the filesystem facts dynamically.
+- Added `skills/registry.yaml` as the intended published Skill surface and made validation, deployment, and smoke tests share the registry-driven discovered/active/published Skill-set contract.
 - Extended engineering-philosophy routing for repository knowledge evolution while keeping ordinary feature work on its focused Skills.
+- Added candidate-path isolation rules so lifecycle candidates cannot be silently installed by runtimes that discover every `SKILL.md`.
+- Added registry owner, verification, generation, and promotion contracts plus valid/invalid schema fixtures.
 
 ### Design intent
 

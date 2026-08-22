@@ -359,3 +359,16 @@
     - Merge or route references instead of creating duplicate Skills.
   forbidden: [architecture-boundaries, ddd-lite]
   acceptance: Different filenames do not create duplicate task owners.
+- id: KLC-031
+  category: frontmatter-spec
+  language: en
+  prompt: A generated Skill puts nested provenance and lifecycle objects directly in SKILL.md frontmatter. How should the compiler correct it?
+  context: The Agent Skills standard requires interoperable frontmatter, while structured lifecycle data can live in a linked knowledge.yaml sidecar.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [code-review-and-quality]
+  expected_decisions:
+    - Keep standard Skill frontmatter limited to the supported identity and simple metadata fields.
+    - Move structured provenance, generation, lifecycle, ownership, and promotion data into a validated sidecar record.
+    - Validate the frontmatter with skills-ref and the sidecar with the generated Skill record schema.
+  forbidden: [ddd-lite]
+  acceptance: The generated Skill remains standards-compatible and its sidecar preserves traceable lifecycle metadata.

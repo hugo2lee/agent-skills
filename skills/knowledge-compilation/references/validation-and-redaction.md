@@ -23,7 +23,7 @@ Block or redact before registration:
 
 - passwords, tokens, API keys, credentials, and private keys;
 - unredacted production configuration and secret-bearing endpoints;
-- device serials, MAC addresses, unique identifiers, and customer data;
+- unique hardware identifiers, MAC addresses, and customer data;
 - private logs or payloads whose contents are not intended as project knowledge.
 
 Use an explicit marker such as `<redacted-device-id>` when the fact that a value

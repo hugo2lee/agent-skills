@@ -29,12 +29,13 @@ repository's Agent knowledge itself is the thing being evolved.
 
 1. **Compile knowledge from evidence, not filenames.** Inspect the changed artifact, its source, behavior, and task signal before deciding what knowledge product it represents.
 2. **Prefer an existing owner.** Update an existing reference, registry entry, or Skill when it already owns the task; repeated files do not by themselves justify a new Skill.
-3. **Generation does not imply activation.** A candidate may be synthesized for evaluation without becoming an active default route.
-4. **Preserve provenance.** Generated knowledge records source paths, canonical source, source commit, generation version, and regeneration instructions where applicable.
+3. **Generation does not imply activation.** A candidate may be synthesized for evaluation without becoming an active default route; candidates must remain outside automatically discovered active paths.
+4. **Preserve provenance.** Generated Skill `SKILL.md` files keep standard-compatible frontmatter; structured provenance, generation, lifecycle, ownership, and promotion data live in a linked validated sidecar record.
 5. **Canonical sources outrank generated summaries.** A conflict is surfaced for reconciliation; it is never silently merged in favor of generated text.
 6. **Keep scope project-local by default.** A project observation or generated Skill cannot automatically become a global engineering-philosophy rule.
 7. **Protect the write boundary.** Automation may update registered knowledge artifacts, references, evals, and compiler metadata; it must not modify unrelated product source, production data, secrets, or submodule contents.
 8. **Redact before registration.** Block or redact credentials, private keys, tokens, device identifiers, customer data, and unredacted production configuration without inventing replacement facts.
+9. **Keep the registry executable.** Owner, verification, generation, and promotion records must satisfy the knowledge registry schema before synchronization.
 
 ## Lifecycle
 

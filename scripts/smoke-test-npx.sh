@@ -2,12 +2,24 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd -P)"
+PYTHON_BIN="${AGENT_SKILLS_PYTHON:-$ROOT_DIR/.venv/bin/python3}"
+if [[ ! -x "$PYTHON_BIN" ]]; then
+  PYTHON_BIN="python3"
+fi
+if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
+  printf 'ERROR: Python executable not found: %s\n' "$PYTHON_BIN" >&2
+  exit 1
+fi
+
+published_output="$("$PYTHON_BIN" "$ROOT_DIR/scripts/skill-set.py" --mode published)"
 SKILLS=()
-while IFS= read -r skill; do
-  SKILLS+=("$skill")
-done < <(find "$ROOT_DIR/skills" -mindepth 2 -maxdepth 2 -type f -name SKILL.md -print | sed -E 's#^.*/skills/##; s#/SKILL[.]md$##' | sort)
+if [[ -n "$published_output" ]]; then
+  while IFS= read -r skill; do
+    [[ -n "$skill" ]] && SKILLS+=("$skill")
+  done <<< "$published_output"
+fi
 if (( ${#SKILLS[@]} == 0 )); then
-  printf 'ERROR: no top-level Skills discovered under %s/skills.\n' "$ROOT_DIR" >&2
+  printf 'ERROR: no published Skills found in skills/registry.yaml.\n' >&2
   exit 1
 fi
 
@@ -101,3 +113,4 @@ done
 
 printf 'npx skills discovery and installation smoke test passed: %d Skills -> %s\n' \
   "${#SKILLS[@]}" "$installed_root"
+printf 'INSTALLED_SKILLS=%s\n' "$(printf '%s\n' "${SKILLS[@]}" | paste -sd, -)"

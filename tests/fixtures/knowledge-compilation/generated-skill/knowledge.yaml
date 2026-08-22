@@ -1,0 +1,17 @@
+schema_version: "1"
+generated: true
+generated_by: knowledge-compiler
+skill_path: generated/skill-candidates/example-generated-skill
+provenance:
+  source_paths:
+    - docs/example.md
+  source_commit: abc123
+generation:
+  version: "0.1.0"
+  command: ./scripts/knowledge-compiler
+lifecycle:
+  status: candidate
+  confidence: high
+ownership:
+  owner: example-team
+  scope: project

@@ -18,20 +18,6 @@ OPENCLAW_ROOT="${AGENT_SKILLS_OPENCLAW_ROOT:-$USER_DIR/.openclaw/skills}"
 DRY_RUN=false
 FORCE=false
 
-SKILLS=(
-  engineering-philosophy
-  requirement-engineering
-  change-planning
-  architecture-boundaries
-  ddd-lite
-  incremental-implementation
-  test-driven-development
-  systematic-debugging
-  code-review-and-quality
-  git-workflow-and-versioning
-  ci-cd-and-automation
-)
-
 usage() {
   cat <<'USAGE'
 Usage:
@@ -90,6 +76,25 @@ while (($# > 0)); do
 done
 
 "$ROOT_DIR/scripts/validate.sh"
+
+PYTHON_BIN="${AGENT_SKILLS_PYTHON:-$ROOT_DIR/.venv/bin/python3}"
+if [[ ! -x "$PYTHON_BIN" ]]; then
+  PYTHON_BIN="python3"
+fi
+if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
+  printf 'ERROR: Python executable not found: %s\n' "$PYTHON_BIN" >&2
+  exit 1
+fi
+
+published_output="$("$PYTHON_BIN" "$ROOT_DIR/scripts/skill-set.py" --mode published)"
+SKILLS=()
+while IFS= read -r skill; do
+  [[ -n "$skill" ]] && SKILLS+=("$skill")
+done <<< "$published_output"
+if (( ${#SKILLS[@]} == 0 )); then
+  printf 'ERROR: no published Skills found in skills/registry.yaml.\n' >&2
+  exit 1
+fi
 
 if ! command -v rsync >/dev/null 2>&1; then
   printf 'ERROR: rsync is required for safe managed copies.\n' >&2
@@ -184,3 +189,8 @@ for target_root in "${targets[@]}"; do
     printf 'deployed %s -> %s\n' "$skill" "$destination"
   done
 done
+if [[ "$DRY_RUN" == true ]]; then
+  printf 'PLANNED_SKILLS=%s\n' "$(printf '%s\n' "${SKILLS[@]}" | paste -sd, -)"
+else
+  printf 'DEPLOYED_SKILLS=%s\n' "$(printf '%s\n' "${SKILLS[@]}" | paste -sd, -)"
+fi

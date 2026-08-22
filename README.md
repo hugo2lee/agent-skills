@@ -114,6 +114,10 @@ npx skills@latest add hugo2lee/engineering-philosophy \
 
 ## The 12 Skills
 
+维护者验证时区分三个集合：filesystem 中的 Discovered Skill Set、registry 中
+`status: active` 的 Published Active Skill Set，以及安装器实际输出的 Installed
+Skill Set。候选 Skill 必须留在自动发现的 active path 之外，直到通过晋升门禁。
+
 仓库保持恰好 12 个顶层 Skill。仓库是发布和验证边界，不是一个必须整体触发的巨大 Skill；每个目录都可以独立调用。
 
 - `engineering-philosophy`：总纲、规则等级、全局/项目边界、生命周期和路由。显式入口，不作为所有请求的必经层。
@@ -233,11 +237,11 @@ scripts/deploy.sh --dry-run
 git diff --check
 ```
 
-验证器会读取 `skills/registry.yaml`，动态发现并检查 12 个 Skill 的 frontmatter、`agents/openai.yaml`、metadata version、references 链接、独立 eval、routing eval、30 个 feature lifecycle cases、30 个 knowledge lifecycle cases、registry 一致性和文档版本一致性。PyYAML 与 Agent Skills reference validator 是验证依赖；例如：
+验证器会读取 `skills/registry.yaml`，动态检查 12 个 published Skill 的标准 frontmatter、`agents/openai.yaml`、metadata version、references 链接、独立 eval、routing eval、30 个 feature lifecycle cases、31 个 knowledge lifecycle cases、registry 一致性、生成 Skill sidecar、JSON Schema fixtures 和文档版本一致性。PyYAML、`jsonschema>=4,<5` 与 Agent Skills reference validator 是验证依赖；例如：
 
 ```sh
 python3 -m venv .venv
-.venv/bin/python -m pip install "PyYAML>=6,<7" "skills-ref==0.1.1"
+.venv/bin/python -m pip install "PyYAML>=6,<7" "jsonschema>=4,<5" "skills-ref==0.1.1"
 scripts/validate.sh
 ```
 
@@ -251,7 +255,7 @@ v0.4.0 is the current development release on the feature branch; v0.3.0 remains 
 v0.4.0 — Continuous Knowledge Compilation
 ```
 
-Stable releases use annotated `vMAJOR.MINOR.PATCH` tags. A pushed stable tag runs the repository validation workflow first, and the GitHub Release is published only after validation succeeds. The released `v0.1.0`, `v0.2.0`, and `v0.2.1` tags remain immutable.
+Stable releases use annotated `vMAJOR.MINOR.PATCH` tags. A pushed stable tag runs the repository validation workflow first, and the GitHub Release is published only after validation succeeds. The released `v0.1.0`, `v0.2.0`, `v0.2.1`, and `v0.3.0` tags remain immutable.
 
 维护者发布后续版本时，可以在已通过 master CI 的最终 release commit 上执行：
 

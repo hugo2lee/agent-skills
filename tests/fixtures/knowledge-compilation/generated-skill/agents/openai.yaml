@@ -1,0 +1,6 @@
+interface:
+  display_name: Example Generated Skill
+  short_description: Verify a generated project workflow from its sidecar record.
+  default_prompt: Use $generated-skill for the verified generated example workflow.
+policy:
+  allow_implicit_invocation: true

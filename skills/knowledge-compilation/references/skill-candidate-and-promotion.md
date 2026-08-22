@@ -17,6 +17,28 @@ A proposed Skill should have:
 One transient incident, one new document, one bounded context, or a future
 possibility is not enough by itself.
 
+## Candidate isolation
+
+A candidate is a lifecycle state, not necessarily a deployable Skill directory.
+If a runtime automatically discovers every `SKILL.md` under a configured
+active path, a candidate must remain outside the active path until activation;
+the registry status alone is insufficient to protect discovery. Candidate
+material may be recorded under an isolated candidate location such as a
+generator-owned output area, but the concrete path is project-specific and
+must not be assumed by this generic protocol.
+
+The three sets must remain distinguishable:
+
+```text
+Discovered Skill Set       = filesystem facts under the runtime discovery path
+Published Active Skill Set = registry entries whose status is active
+Installed Skill Set        = the result emitted by an installer
+```
+
+Validation must fail when a non-active directory appears under an automatically
+discovered active path instead of silently treating it as published. Deployment
+and smoke tests must use the same published registry-driven set.
+
 ## Lifecycle
 
 ```text
@@ -26,12 +48,11 @@ candidate → active → deprecated → archived
 ### candidate
 
 The material is generated or proposed for evaluation. It is not a stable
-project rule and should not be a default route unless the project explicitly
-defines a safe candidate mode.
+project rule and must not be a default route or ordinary installation target.
 
 ### active
 
-The source, provenance, links, evals, redaction checks, route distinction, and
+The source, provenance, links, evals, redaction, route distinction, and
 verification gates pass. It may participate in normal Agent discovery.
 
 ### deprecated
@@ -47,5 +68,5 @@ The material is historical only and must not participate in default discovery.
 
 Activation is a governed decision, not a side effect of generation. Project
 automation may produce candidates and run objective gates; it must not promote
-project knowledge to the global engineering-philosophy scope. Global promotion
-requires independent project evidence and a separate review.
+project knowledge to organization or global engineering-philosophy scope.
+Promotion requires independent evidence, redaction, eval, and review records.

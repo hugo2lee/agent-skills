@@ -1,0 +1,39 @@
+schema_version: "1"
+artifacts:
+  - id: example-source
+    path: src/example/
+    type: source
+    status: active
+    scope: project
+    owner: example-team
+    ownership:
+      owner: example-team
+      team: example-team
+      scope: project
+    provenance:
+      commit: abc123
+    verification:
+      commands:
+        - make test-example
+      last_verified_commit: abc123
+      last_verified_at: "2026-08-22T00:00:00Z"
+  - id: example-generated
+    path: docs/generated/example.md
+    type: generated
+    status: active
+    scope: project
+    owner: example-team
+    provenance:
+      canonical_sources:
+        - api/example.proto
+      commit: abc123
+    verification:
+      commands:
+        - make test-example
+    generation:
+      generated_from:
+        - api/example.proto
+      command: make generate
+      version: "1.2.0"
+    related_skills:
+      - example-skill

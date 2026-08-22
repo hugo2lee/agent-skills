@@ -1,48 +1,37 @@
 # Source of Truth and Provenance
 
-Every knowledge product needs a maintenance authority. Provenance explains the
-relationship; it does not promote a summary above its source.
+Knowledge compilation preserves the difference between an authority and a
+derivative. Code, executable schemas, tests, release baselines, approved
+decisions, and explicit external contracts may be canonical sources depending
+on the artifact. Summaries, generated docs, reports, and Skills do not become
+authoritative merely because they are newer or easier to read.
 
-## Precedence
+## Provenance record
 
-Use this order when deciding what to inspect first:
+For every registered artifact, record:
 
-```text
-executable contract / source / test / release baseline
-        ↓
-approved decision or requirement
-        ↓
-maintained reference
-        ↓
-generated summary or index
-        ↓
-historical evidence and draft notes
-```
+- the artifact path and lifecycle status;
+- the owner and project/organization/global scope;
+- canonical source paths, or explicitly named external sources;
+- the source commit or revision when available;
+- verification commands and the last verified revision/time when known;
+- generator version, generated-from inputs, and command for generated output.
 
-The order is a starting point, not permission to ignore an explicit conflict.
-An approved decision may authorize a future change that code has not yet
-implemented; record that state instead of declaring either side wrong.
+Source artifacts may have no parent canonical source. Derivative artifacts must
+have one or more canonical or external sources. A missing source is a visible
+`unverified` or `stale` condition, not permission to invent a replacement.
 
-## Provenance fields
+## Conflict rule
 
-At minimum, record:
+When a generated summary, report, or document conflicts with released behavior,
+the executable contract or approved decision remains canonical until the
+conflict is investigated and an authorized change is recorded. The compiler
+must surface the conflict and preserve both evidence paths; it must not
+silently rewrite the baseline.
 
-- canonical source path(s);
-- source commit, revision, or external version;
-- owner or maintainer role;
-- last verification date when the project uses one;
-- generation command and version for generated material;
-- related Skills and verification commands.
+## Scope rule
 
-## Conflicting source claims
-
-If a generated summary says one thing and code or a baseline says another,
-preserve the conflict and classify it as stale summary, source drift, authorized
-change, or unresolved. Never overwrite the canonical source to make the
-registry look consistent.
-
-## Renames and deletion
-
-A rename updates provenance after confirming identity. A deleted source makes
-dependent generated knowledge stale until a replacement is established. Do not
-silently leave a broken path as if it were active.
+Project facts remain project-scoped by default. A project artifact or generated
+Skill cannot become a global engineering-philosophy rule without independent
+cross-project evidence, redaction of local facts, discriminating evals, and a
+separate promotion review.
