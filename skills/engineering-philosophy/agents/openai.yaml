@@ -1,6 +1,6 @@
 interface:
   display_name: "Engineering Philosophy"
-  default_prompt: "Use $engineering-philosophy to choose the right engineering Skill and keep global principles separate from project rules."
-  short_description: "Govern pragmatic engineering decisions"
+  default_prompt: "Use $engineering-philosophy to reconcile behavior, route a proportional feature lifecycle, and keep global principles separate from project rules."
+  short_description: "Govern evidence-driven feature changes"
 policy:
   allow_implicit_invocation: false

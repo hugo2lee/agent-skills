@@ -1,37 +1,64 @@
 ---
 name: architecture-boundaries
-description: Decide whether a technical dependency boundary is meaningful and design Ports, Adapters, dependency inversion, explicit injection, and test seams. Use for DI, interfaces, package direction, infrastructure isolation, and protocol translation; not for primarily business invariants or active failure diagnosis.
+description: Decide whether a technical dependency boundary is meaningful and derive Ports, Adapters, dependency inversion, explicit injection, and test seams from demonstrated architecture pressure. Use for DI, interfaces, package direction, infrastructure isolation, and protocol translation; not for primarily business invariants or active failure diagnosis.
 license: AGPL-3.0-only
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
   category: "architecture"
 ---
 
 # Architecture Boundaries
 
-## Use this skill when
+## Use this Skill when
 
-Use this Skill for architecture design, refactoring, dependency direction, ports and adapters, infrastructure isolation, dependency injection, package boundaries, or test seam decisions.
+Use this Skill for architecture design, refactoring, dependency direction, ports and adapters, infrastructure isolation, dependency injection, package boundaries, protocol translation, or deciding whether a change needs an architectural enabler.
 
-Do not use it to justify a full architecture template for every project. For business modeling and invariants, route to ddd-lite. For a concrete failure, route to systematic-debugging.
+Do not use it to justify a full architecture template for every project. For business modeling and invariants, route to `ddd-lite`. For a concrete failure, route to `systematic-debugging`.
 
 ## Governing rule
 
 Prefer the simplest architecture that preserves meaningful boundaries.
 
-A meaningful boundary protects at least one real responsibility, substitution point, independent test, protocol, deployment unit, ownership boundary, or source of change. A type name alone is not evidence of a boundary.
+A meaningful boundary protects a real business responsibility, substitution point, independent test, protocol, deployment unit, ownership boundary, or demonstrated source of change. A type name, `service` suffix, or `rule` keyword alone is not evidence.
+
+## Architecture pressure
+
+Start from evidence:
+
+```text
+Business Requirement
+        ↓
+Change Pressure
+        ↓
+Architecture Requirement
+        ↓
+Architectural Enabler
+```
+
+Distinguish an explicit architecture requirement stated by the user from a derived requirement inferred from business change. For example, multiple device protocols may derive a protocol-independent Port and Adapters; a fixed single condition with no runtime variation does not derive a Rule Engine.
+
+For every proposed boundary, answer:
+
+- What real change or responsibility does it protect?
+- Why is it worth establishing now?
+- What concrete failure or coupling occurs without it?
+- What is the smallest enabler that supports the current business slice?
+- How will the boundary be verified?
+
+Architecture is conditional. It may protect demonstrated business pressure, but it must not invent missing business semantics.
 
 ## Decision sequence
 
-1. State the behavior and change risk the boundary should protect.
+1. State the behavior and change pressure the boundary should protect.
 2. Identify the caller, capability owner, implementation, and direction of dependency.
-3. Decide whether concrete types are sufficient inside the boundary.
-4. If the boundary is real, define the smallest purposeful contract on the consumer side.
-5. Inject the implementation explicitly and assemble it at the Composition Root.
-6. Keep protocol and provider translation in an Adapter.
-7. Check that Domain and application policy do not depend on infrastructure details.
-8. Add a test seam that verifies the boundary behavior.
-9. Re-evaluate whether DDD modeling is needed; route that decision to ddd-lite.
+3. Inspect existing capabilities before creating a new Service, Port, Repository, or Adapter.
+4. Decide whether concrete types are sufficient inside the boundary.
+5. If the boundary is real, define the smallest purposeful contract on the consumer side.
+6. Inject the implementation explicitly and assemble it at the Composition Root.
+7. Keep protocol and provider translation in an Adapter.
+8. Check that Domain and application policy do not depend on infrastructure details.
+9. Add a test seam that verifies the boundary behavior.
+10. Re-evaluate whether DDD modeling is needed; route that decision to `ddd-lite`.
 
 ## MUST
 
@@ -42,6 +69,7 @@ A meaningful boundary protects at least one real responsibility, substitution po
 - Concrete implementations must be assembled at the Composition Root.
 - Important boundaries must have a meaningful verification seam.
 - Do not create interfaces solely to make local mocking convenient.
+- Do not introduce an architecture enabler before the business pressure and current slice are understood.
 
 ## SHOULD
 
@@ -50,7 +78,7 @@ A meaningful boundary protects at least one real responsibility, substitution po
 - Let repositories express domain capabilities instead of exposing storage CRUD.
 - Keep application services responsible for orchestration, not hidden domain invariants.
 - Let adapters translate protocols and providers without leaking them inward.
-- Migrate large systems through small vertical slices.
+- Migrate large systems through small vertical slices that include only the necessary enabler.
 
 ## CONDITIONAL
 
@@ -58,11 +86,13 @@ Introduce an inbound port only when it protects a meaningful boundary or substit
 
 Introduce a repository abstraction only when storage is a real change boundary, the domain needs a capability, or independent testing requires it.
 
-Introduce an Aggregate, Domain Event, CQRS, or another DDD pattern only when its business invariant or consistency requirement is real. Route the modeling decision to ddd-lite.
+Introduce a Rule Engine only when runtime data-driven rules, continued rule-type variation, or independent rule execution is demonstrated. A single fixed condition does not justify one.
+
+Introduce an Aggregate, Domain Event, CQRS, or another DDD pattern only when its business invariant or consistency requirement is real. Route the modeling decision to `ddd-lite`.
 
 ## Anti-patterns
 
-Reject these unless there is unusually strong evidence:
+Reject these unless unusually strong evidence exists:
 
 - one interface for every struct or service;
 - an application service depending directly on a concrete database client;
@@ -70,18 +100,22 @@ Reject these unless there is unusually strong evidence:
 - constructors that create their own infrastructure;
 - ORM base types leaking into domain objects;
 - a repository that exposes every table operation without domain meaning;
-- a giant service that owns every domain rule.
+- a giant service that owns every domain rule;
+- a complete platform built before one business slice proves its need;
+- a Rule Engine created only because the word “rule” appeared in a request.
 
-Read [hexagonal.md](references/hexagonal.md) for port and adapter terminology, [testing-seams.md](references/testing-seams.md) for verification boundaries, [languages/go.md](references/languages/go.md) for Go package and constructor guidance, and [languages/cpp.md](references/languages/cpp.md) when applying the same decisions in C++.
+Read [hexagonal.md](references/hexagonal.md) for port and adapter terminology, [testing-seams.md](references/testing-seams.md) for verification boundaries, [architecture-pressure-and-enablers.md](references/architecture-pressure-and-enablers.md) for derived requirements, and [languages/go.md](references/languages/go.md) for the first-version Go package and constructor guidance.
 
 ## Verification
 
 Before accepting a design, show:
 
-- the boundary and the reason it is meaningful;
+- the business behavior and demonstrated pressure;
+- the explicit or derived architecture requirement;
+- the boundary and why it is meaningful now;
 - the dependency direction;
 - the contract owner and smallest capability surface;
 - the Composition Root or injection path;
 - the adapter translation point;
 - the test or contract that proves the boundary;
-- the reason any conditional pattern was or was not introduced.
+- the simpler alternative that was rejected and why.

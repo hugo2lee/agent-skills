@@ -1,0 +1,6 @@
+interface:
+  display_name: "Requirement Engineering"
+  default_prompt: "Use $requirement-engineering to clarify behavior, reconcile it with existing releases and baselines, and surface decisions that require the user."
+  short_description: "Reconcile behavior before implementation"
+policy:
+  allow_implicit_invocation: true

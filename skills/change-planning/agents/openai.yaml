@@ -1,0 +1,6 @@
+interface:
+  display_name: "Change Planning"
+  default_prompt: "Use $change-planning to inspect the existing system and plan an approved change through behavior slices, boundaries, dependencies, risks, and verification."
+  short_description: "Plan changes from repository evidence"
+policy:
+  allow_implicit_invocation: true

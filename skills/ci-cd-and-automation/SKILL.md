@@ -1,9 +1,9 @@
 ---
 name: ci-cd-and-automation
-description: Design or verify automated build, test, quality-gate, release, deployment, and post-deployment checks, including failure evidence and stop or rollback conditions. Do not use it for branch, commit, or tag history, or infer product correctness from a green pipeline alone.
+description: Design or verify proportional build, test, baseline, artifact, release, deployment, and post-deployment gates with failure evidence and stop conditions. Do not use it for branch, commit, or tag history.
 license: AGPL-3.0-only
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
   category: "delivery"
 ---
 
@@ -11,51 +11,51 @@ metadata:
 
 ## Use this skill when
 
-Use this Skill when adding or changing automated checks, build pipelines, release workflows, deployment verification, or failure handling.
+Use this Skill when adding or changing automated checks, build pipelines, release workflows, deployment verification, or failure handling. It protects delivery evidence; a green pipeline does not by itself prove every business decision is correct.
 
 Do not invent provider-specific configuration without repository evidence. Keep project-specific commands in project rules or pipeline files.
 
-## Quality-gate sequence
+## Gate sequence
 
-1. Define the behavior or artifact the pipeline must protect.
-2. Identify the cheapest reliable check for each failure class.
-3. Run fast feedback first, then slower integration or release checks.
-4. Preserve actionable logs and artifacts on failure.
-5. Verify the built artifact and deployment target, not only the source checkout.
-6. Define stop, retry, rollback, or manual intervention conditions.
-7. Keep the pipeline proportional to the risk.
+1. **Behavior and baseline gate** — run focused behavior tests and the applicable service, persistence, outbound, and inbound baselines.
+2. **Quality gate** — run formatting, static analysis, unit/integration tests, validation, and build checks appropriate to the repository.
+3. **Artifact gate** — verify the exact package, image, source revision, version, and metadata that will be deployed or published.
+4. **Deployment gate** — verify the target environment, health checks, compatibility, and rollout evidence.
+5. **Release gate** — publish only when the prior gates pass and stop or rollback conditions are defined.
 
 ## MUST
 
 - Keep required checks deterministic enough to diagnose.
-- Fail when a required quality gate fails.
-- Preserve evidence that explains a failed job.
-- Verify the artifact produced by the pipeline.
+- Fail when a required gate fails and retain actionable logs or artifacts.
+- Verify the artifact produced by the pipeline, not only the source checkout.
+- Ensure release behavior baselines are present, passing, or intentionally updated with authorization.
 - Define what happens after a failed deployment or health check.
+- Stop release when the artifact identity, version, baseline, or required evidence does not match.
 - Keep secrets and environment-specific policy out of general Skill instructions.
 
 ## SHOULD
 
-- Run fast unit and static checks before slower integration checks.
-- Cache only when cache invalidation cannot hide failures.
+- Run fast checks before slower integration or deployment checks.
 - Separate build, test, package, deploy, and post-deploy verification responsibilities.
 - Make flaky checks visible and track their removal.
-- Prefer a reversible rollout when the failure cost is high.
+- Prefer a reversible rollout when failure cost is high.
+- Preserve the evidence needed for `systematic-debugging` when a job fails.
 
 ## Do not
 
 - treat a green pipeline as proof of all business correctness;
-- add a quality gate that nobody can diagnose;
+- delete or weaken a baseline to make the pipeline green;
 - hide failures through retries without measuring the underlying cause;
 - deploy an artifact different from the one verified;
-- encode a project-specific provider assumption as a global rule.
+- encode a project-specific provider assumption as a global rule;
+- define product semantics in CI configuration.
 
 Read [quality-gates.md](references/quality-gates.md) for check design and [release-verification.md](references/release-verification.md) for artifact and deployment verification.
 
 ## Routing
 
-Use code-review-and-quality to inspect pipeline changes. Use git-workflow-and-versioning for release history. Use systematic-debugging for failed jobs or deployments.
+Use `code-review-and-quality` to inspect pipeline changes, `git-workflow-and-versioning` for release history and tag mechanics, and `systematic-debugging` for failed jobs or deployments. Use `test-driven-development` references when a missing baseline is a behavior gap.
 
 ## Verification
 
-A pipeline change is complete when the required checks, failure evidence, artifact identity, deployment verification, and rollback or stop conditions are demonstrably defined.
+Gate 4 is ready when required checks, release baselines, failure evidence, artifact identity, deployment verification, and rollback or stop conditions are demonstrably defined. The handoff must distinguish verified facts from residual operational uncertainty.
