@@ -37,7 +37,7 @@ A Release Behavior Baseline is the accepted promise that must remain executable 
 - Outbound Contract Baseline, when an external protocol/provider matters;
 - Inbound Mapping Baseline, when transport mapping matters.
 
-Do not confuse a green focused unit test with complete release evidence. Add the applicable baseline after the behavior is accepted for release.
+Do not confuse a green focused unit test with complete release evidence. Establish the applicable baseline before the Gate 3 change review; a baseline may be refined during implementation, but it must exist before the review decision and may change only through an authorized behavior decision.
 
 ## MUST
 
@@ -47,6 +47,7 @@ Do not confuse a green focused unit test with complete release evidence. Add the
 - Keep the implementation minimal until the next behavior requires more.
 - Preserve a regression test for every confirmed bug.
 - Establish or update the appropriate release baseline only with an authorized behavior decision.
+- Establish the applicable release baseline before Gate 3 review, not after review has already approved the change.
 - Never weaken a failing baseline merely to make new implementation pass.
 - If a baseline must change, record the requirement and user/product decision first.
 

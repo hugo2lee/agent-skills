@@ -30,24 +30,29 @@ v0.3.0 将这条原则落实为六个判断：
 对有实际影响的功能变更，推荐按以下顺序推进：
 
 ```text
-Request
-  -> Requirement Contract
+User Request
+  -> Requirement Clarification
   -> Requirement Reconciliation
-  -> User Decision Gate
+  -> User Decision Gate, when required
+  -> Approved Requirement Contract
   -> Repository Analysis
-  -> Change Analysis
+  -> Business Change / Impact Analysis
+  -> Architecture Pressure Analysis
+  -> Conditional architecture-boundaries / ddd-lite routing
   -> Implementation Plan
-  -> Implementation & Discovery
-  -> Review Gate
+  -> Incremental Implementation
+  -> TDD / Focused Verification
   -> Release Behavior Baseline
-  -> Release Gate
+  -> Change Review / Gate 3
+  -> CI / Artifact / Release Verification / Gate 4
+  -> Version / Tag / Release
 ```
 
 四个 Gate 是决策保护，不是文档仪式：
 
 - **Gate 1 — Requirement Approved**：行为、非目标、冲突和需要用户决定的事项已经清楚。
 - **Gate 2 — Ready for Implementation**：仓库影响面、复用能力、变更压力、架构 enabler、任务依赖和验证条件已明确。
-- **Gate 3 — Ready for Review**：实现、计划演化、行为测试、适用 baseline 和剩余不确定性都可审查。
+- **Gate 3 — Ready for Review**：实现可运行，相关行为测试为绿，适用 Release Behavior Baseline 已建立，计划/需求偏差已记录，必要时 Feature Change Record 已更新，然后再进行变更审查。
 - **Gate 4 — Ready for Release**：验证过的就是将要发布的 artifact，质量闸、部署健康检查和停止/回滚条件齐备。
 
 简单、明确、孤立的修改可以把证据保留在任务或提交中；跨边界、兼容性敏感或发布风险较高的功能，建议创建 `docs/changes/<feature-name>.md`。详细流程见 [Feature Change Lifecycle](skills/engineering-philosophy/references/feature-change-lifecycle.md)，记录模板见 [Feature Change Record](skills/engineering-philosophy/references/feature-change-record.md)。
@@ -77,13 +82,13 @@ npx skills@latest add hugo2lee/engineering-philosophy \
 
 `npx skills` 会自动发现仓库中的 `skills/<name>/SKILL.md`，因此不需要创建或发布 npm 包。安装后可以使用 `npx skills ls -g` 查看，使用 `npx skills update -g -y` 更新已安装 Skill。
 
-不同 Agent 的默认全局目录如下：
+不同 Agent 的原生/默认全局目录如下：
 
 - Codex：`~/.codex/skills`
 - Cline：`~/.agents/skills`
 - OpenClaw：`~/.openclaw/skills`
 
-不同版本的 CLI 可能为多 Agent 安装选择共享目录；以 `npx skills ls -g` 和实际 Agent 文档为准。维护者的 `scripts/deploy.sh` 提供精确目录、marker 和接管保护，普通用户优先使用 `npx skills`。
+原生 Agent 目录和 `npx skills` 的安装目标是两个概念。当前实测 `npx skills@latest` 在同时指定 `--agent codex --agent cline` 时使用共享的 `~/.agents/skills`，指定 OpenClaw 时使用 `~/.openclaw/skills`；`scripts/smoke-test-npx.sh` 有意验证这一 CLI 行为。维护者的 `scripts/deploy.sh` 是独立的复制部署辅助工具，默认按上面的原生目录分别写入，也可以通过参数传入临时目标。实际安装后请用 `npx skills ls -g` 和对应 Agent 文档确认最终路径。
 
 ## The 11 Skills
 
@@ -101,7 +106,7 @@ npx skills@latest add hugo2lee/engineering-philosophy \
 - `git-workflow-and-versioning`：分支、原子提交、版本、CHANGELOG、Tag 和发布可追溯性。
 - `ci-cd-and-automation`：测试/构建质量闸、artifact 身份、部署健康、停止/回滚和 Gate 4。
 
-首版和当前版本均不创建 C++ Skill；也不创建独立的安全、可观测性或 ADR Skill。代码示例和语言落地参考以 Go 为主，不把项目版本或公司约束写进全局 Skill。
+首版和当前版本均不创建 C++ Skill；也不创建独立的安全、可观测性或 ADR Skill。代码示例和语言落地参考集中在 `architecture-boundaries` 下的 Go 与 C++ 参考文件中，不把项目版本或公司约束写进全局 Skill。
 
 ## Requirement Reconciliation
 
@@ -143,7 +148,7 @@ Service 测试不能证明真实数据库 adapter；mock 的调用次数不能�
 
 ## Feature Change Record
 
-推荐的项目级记录路径是 `docs/changes/<feature-name>.md`，包括：Request、Requirement Contract、Requirement Reconciliation、Repository Analysis、Change Analysis、Design Decisions、Implementation Plan、Implementation & Discovery Notes、四类 Release Behavior Baseline、Verification 和 Release Traceability。
+推荐的项目级记录路径是 `docs/changes/<feature-name>.md`，包括：Request、Requirement Clarification、Requirement Reconciliation、Approved Requirement Contract、Repository Analysis、Business Change / Impact Analysis、Architecture Pressure Analysis、Design Decisions、Implementation Plan、Incremental Implementation / Discovery Notes、四类 Release Behavior Baseline、Change Review、Verification 和 Release Traceability。
 
 记录不是第二份代码。它的价值是让实现中的发现、计划偏离、用户决策、验证证据和最终发布 artifact 互相可追溯。完整模板见 [feature-change-record.md](skills/engineering-philosophy/references/feature-change-record.md)。
 

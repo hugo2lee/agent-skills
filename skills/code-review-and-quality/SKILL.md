@@ -42,7 +42,7 @@ Compare these artifacts rather than reviewing the diff in isolation:
 - Distinguish blocking defects from suggestions.
 - Verify claims with tests, reproduction, or direct evidence.
 - Check that the change stays within scope.
-- Complete Gate 3 only when the record, tests, and remaining uncertainty are visible.
+- Complete Gate 3 only when the implementation is runnable, relevant behavior tests are green, applicable Release Behavior Baselines are established, requirement/plan deviations are recorded, the Feature Change Record is updated when applicable, and remaining uncertainty is visible.
 
 ## SHOULD
 
@@ -69,4 +69,4 @@ Route requirement mismatch to `requirement-engineering`, planning or repository-
 
 ## Verification
 
-Gate 3 is ready when each finding has severity, location, impact, recommendation, and evidence; the summary states contract/plan/diff/baseline alignment, residual risk, checks performed, and any explicit follow-up.
+Gate 3 is ready only after the baseline is established and each finding has severity, location, impact, recommendation, and evidence; the summary states contract/plan/diff/baseline alignment, residual risk, checks performed, and any explicit follow-up.

@@ -493,7 +493,7 @@
   language: zh
   prompt: >
     实现时发现原计划的 adapter 不支持事务，必须改成现有 transaction port。请判断这是否允许，
-    以及 Review Gate 需要看到什么记录。
+    以及 Change Review / Gate 3 需要看到什么记录。
   context: The observable requirement is unchanged and the repository evidence is documented.
   expected_primary: code-review-and-quality
   allowed_secondary:

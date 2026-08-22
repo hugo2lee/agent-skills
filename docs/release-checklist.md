@@ -13,6 +13,12 @@ Use this checklist for a versioned Skill Suite release. The repository is distri
 - [ ] Confirm repository analysis, architecture pressure/enabler, and four release baseline references are present and linked.
 - [ ] Add or update eval cases for changed routing and lifecycle decisions, including the 30 lifecycle cases.
 - [ ] Keep `engineering-philosophy` explicit-only; specialist Skills remain independently discoverable.
+- [ ] Confirm the applicable Release Behavior Baseline is established before Gate 3 change review.
+- [ ] Confirm the v0.2.x released CHANGELOG history was restored and not rewritten for current branding.
+- [ ] Confirm `skills/architecture-boundaries/references/languages/cpp.md` is present and linked without creating a C++ top-level Skill.
+- [ ] Confirm `requirement-engineering` specialist evals use `REQ-*` IDs and v0.3 semantic cases.
+- [ ] Confirm `change-planning` specialist evals use `CHG-*` IDs and v0.3 semantic cases.
+- [ ] Confirm README, deploy, and npx smoke-test path terminology distinguishes native Agent paths from current npx CLI behavior.
 - [ ] Do not create a C++ Skill, additional top-level Skill, v0.3.0 tag, or GitHub Release until the release commit is approved.
 
 ## Before committing
@@ -21,6 +27,8 @@ Use this checklist for a versioned Skill Suite release. The repository is distri
 - [ ] Confirm architecture changes are tied to demonstrated change pressure and a smallest useful enabler.
 - [ ] Confirm business and architectural work is represented as runnable vertical slices.
 - [ ] Confirm service, persistence, outbound, and inbound baselines are protected or intentionally updated.
+- [ ] Establish applicable Release Behavior Baselines before Gate 3 review.
+- [ ] Confirm Gate 3 requires a runnable implementation, green relevant behavior tests, recorded requirement/plan deviations, and an updated Feature Change Record when applicable.
 - [ ] Confirm no silent plan drift, unapproved behavior change, or baseline weakening remains.
 
 ## Validation

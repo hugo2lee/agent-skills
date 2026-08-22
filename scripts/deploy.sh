@@ -5,10 +5,10 @@ ROOT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd -P)"
 SOURCE_DIR="$ROOT_DIR/skills"
 USER_DIR="${HOME:?HOME must be set}"
 
-LEGACY_SHARED_ROOT="${AGENT_SKILLS_SHARED_ROOT:-}"
-if [[ -n "$LEGACY_SHARED_ROOT" ]]; then
-  CLINE_ROOT="${AGENT_SKILLS_CLINE_ROOT:-$LEGACY_SHARED_ROOT}"
-  CODEX_ROOT="${AGENT_SKILLS_CODEX_ROOT:-$LEGACY_SHARED_ROOT}"
+SHARED_ROOT_OVERRIDE="${AGENT_SKILLS_SHARED_ROOT:-}"
+if [[ -n "$SHARED_ROOT_OVERRIDE" ]]; then
+  CLINE_ROOT="${AGENT_SKILLS_CLINE_ROOT:-$SHARED_ROOT_OVERRIDE}"
+  CODEX_ROOT="${AGENT_SKILLS_CODEX_ROOT:-$SHARED_ROOT_OVERRIDE}"
 else
   CLINE_ROOT="${AGENT_SKILLS_CLINE_ROOT:-$USER_DIR/.agents/skills}"
   CODEX_ROOT="${AGENT_SKILLS_CODEX_ROOT:-$USER_DIR/.codex/skills}"
@@ -41,12 +41,14 @@ Usage:
 This is a maintainer local-development helper; npx skills is the recommended
 installation path for ordinary users. The default operation copies all managed
 Skills. --dry-run previews changes. --force allows taking over an existing
-same-named directory without the managed marker. Codex uses ~/.codex/skills,
-Cline uses ~/.agents/skills, and OpenClaw uses ~/.openclaw/skills by default.
-Use the root flags or AGENT_SKILLS_*_ROOT environment variables to test isolated
-destinations. AGENT_SKILLS_SHARED_ROOT remains a compatibility override for a
-legacy shared layout and applies to both Codex and Cline unless their specific
-root override is set.
+same-named directory without the managed marker. The native/default destinations
+are ~/.codex/skills for Codex, ~/.agents/skills for Cline, and
+~/.openclaw/skills for OpenClaw. Current npx skills behavior may use
+~/.agents/skills as a shared Codex/Cline canonical root; use npx skills ls -g to
+inspect that CLI-managed destination. Use the root flags or
+AGENT_SKILLS_*_ROOT environment variables to test isolated destinations.
+AGENT_SKILLS_SHARED_ROOT remains an explicit shared-layout compatibility override
+and applies to both Codex and Cline unless their specific root override is set.
 USAGE
 }
 

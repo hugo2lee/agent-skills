@@ -75,6 +75,9 @@ env "${npx_env[@]}" npx --yes skills@latest add "$ROOT_DIR" \
   --copy \
   --yes
 
+# This assertion covers the current npx skills CLI behavior for a combined
+# Codex+Cline install: it uses the shared ~/.agents/skills root. That is a CLI
+# installation target, distinct from the native Codex ~/.codex/skills path.
 installed_root="$SMOKE_HOME/.agents/skills"
 if [[ ! -d "$installed_root" ]]; then
   printf 'ERROR: expected shared Codex/Cline directory is missing: %s\n' "$installed_root" >&2

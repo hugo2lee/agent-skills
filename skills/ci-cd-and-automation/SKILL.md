@@ -17,11 +17,12 @@ Do not invent provider-specific configuration without repository evidence. Keep 
 
 ## Gate sequence
 
-1. **Behavior and baseline gate** — run focused behavior tests and the applicable service, persistence, outbound, and inbound baselines.
-2. **Quality gate** — run formatting, static analysis, unit/integration tests, validation, and build checks appropriate to the repository.
-3. **Artifact gate** — verify the exact package, image, source revision, version, and metadata that will be deployed or published.
-4. **Deployment gate** — verify the target environment, health checks, compatibility, and rollout evidence.
-5. **Release gate** — publish only when the prior gates pass and stop or rollback conditions are defined.
+1. **Behavior and baseline gate** — run focused behavior tests and establish or verify the applicable service, persistence, outbound, and inbound baselines.
+2. **Change Review / Gate 3 handoff** — consume the review result only after the implementation is runnable, relevant tests are green, applicable baselines exist, and requirement/plan deviations are recorded.
+3. **Quality gate** — run formatting, static analysis, unit/integration tests, validation, and build checks appropriate to the repository.
+4. **Artifact gate** — verify the exact package, image, source revision, version, and metadata that will be deployed or published.
+5. **Deployment gate** — verify the target environment, health checks, compatibility, and rollout evidence.
+6. **CI / Artifact / Release Verification / Gate 4** — publish only when the prior gates pass, the verified artifact identity is recorded, and stop or rollback conditions are defined.
 
 ## MUST
 
@@ -29,6 +30,7 @@ Do not invent provider-specific configuration without repository evidence. Keep 
 - Fail when a required gate fails and retain actionable logs or artifacts.
 - Verify the artifact produced by the pipeline, not only the source checkout.
 - Ensure release behavior baselines are present, passing, or intentionally updated with authorization.
+- Do not treat Gate 3 as complete when a required baseline is scheduled for after review.
 - Define what happens after a failed deployment or health check.
 - Stop release when the artifact identity, version, baseline, or required evidence does not match.
 - Keep secrets and environment-specific policy out of general Skill instructions.

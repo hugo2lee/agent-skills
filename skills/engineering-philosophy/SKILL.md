@@ -57,13 +57,17 @@ For a meaningful new feature, behavior change, migration, cross-boundary change,
 ```text
 User Request
     ↓
-Requirement Clarification and Reconciliation
+Requirement Clarification
+    ↓
+Requirement Reconciliation
     ↓
 User Decision Gate, when product behavior conflicts
     ↓
 Approved Requirement Contract
     ↓
-Repository Impact and Business Change Analysis
+Repository Analysis
+    ↓
+Business Change / Impact Analysis
     ↓
 Architecture Pressure Analysis
     ↓
@@ -71,15 +75,17 @@ Conditional architecture-boundaries / ddd-lite routing
     ↓
 Implementation Plan
     ↓
-Incremental Business Slice + Minimum Architectural Enabler
+Incremental Implementation
     ↓
 TDD / Focused Verification
     ↓
 Release Behavior Baseline
     ↓
-Change Review
+Change Review / Gate 3
     ↓
-CI Gate and Release Traceability
+CI / Artifact / Release Verification / Gate 4
+    ↓
+Version / Tag / Release
 ```
 
 This is not a waterfall model. Documents and plans may evolve when new evidence appears, but implementation must not silently diverge from the Feature Change Record. Record the evidence, decision, and impact when the plan changes.
@@ -88,7 +94,7 @@ The four gates protect decisions, not paperwork:
 
 - **Gate 1 — Requirement Approved**: behavior, scope, acceptance, existing behavior, baselines, conflicts, and material user decisions are resolved.
 - **Gate 2 — Ready for Implementation**: repository analysis, impact analysis, architecture pressure, required decisions, implementation plan, and verification approach exist.
-- **Gate 3 — Ready for Review**: focused and broader checks are green, deviations are recorded, and the release baseline exists.
+- **Gate 3 — Ready for Review**: the implementation is runnable, relevant behavior tests are green, applicable Release Behavior Baselines have been established, requirement/plan deviations are recorded, and the Feature Change Record is updated when applicable. Only then is the change reviewed against the approved contract.
 - **Gate 4 — Ready for Release**: review, applicable baselines, integration checks, CI, Feature Change Record, and traceability are complete.
 
 Read [feature-change-lifecycle.md](references/feature-change-lifecycle.md) for the detailed lifecycle and gates. Use [feature-change-record.md](references/feature-change-record.md) for the project-level record when the change justifies one.

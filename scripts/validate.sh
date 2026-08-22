@@ -205,6 +205,8 @@ minimum_cases = {
     "ddd-lite": 8,
     "test-driven-development": 8,
     "systematic-debugging": 8,
+    "requirement-engineering": 8,
+    "change-planning": 8,
 }
 global_eval_ids = {}
 
@@ -272,6 +274,40 @@ for skill in skills:
         if len(case_ids) < minimum:
             errors.append(f"{skill}: expected at least {minimum} eval cases, found {len(case_ids)}")
 
+specialist_requirements = {
+    "requirement-engineering": {
+        "prefix": "REQ-",
+        "title": "# Requirement Engineering Cases",
+        "forbidden_titles": ("Spec-Driven Development",),
+    },
+    "change-planning": {
+        "prefix": "CHG-",
+        "title": "# Change Planning Cases",
+        "forbidden_titles": ("Planning and Task Breakdown",),
+    },
+}
+for skill, requirement in specialist_requirements.items():
+    cases_path = root / "evals" / skill / "cases.md"
+    expected_path = root / "evals" / skill / "expected.md"
+    if not cases_path.exists() or not expected_path.exists():
+        continue
+    cases_text = cases_path.read_text(encoding="utf-8")
+    expected_text = expected_path.read_text(encoding="utf-8")
+    if not cases_text.splitlines() or cases_text.splitlines()[0].strip() != requirement["title"]:
+        errors.append(f"{skill}: cases.md must use the semantic title {requirement['title']!r}")
+    if not expected_text.splitlines() or expected_text.splitlines()[0].strip() != f"# {skill.replace('-', ' ').title()} Expected Outcomes":
+        errors.append(f"{skill}: expected.md has the wrong semantic title")
+    for forbidden_title in requirement["forbidden_titles"]:
+        if forbidden_title in cases_text or forbidden_title in expected_text:
+            errors.append(f"{skill}: stale migrated eval title remains: {forbidden_title}")
+    case_ids = headings(cases_path)
+    expected_ids = headings(expected_path)
+    for case_id in case_ids + expected_ids:
+        if not case_id.startswith(requirement["prefix"]):
+            errors.append(f"{skill}: eval ID must use {requirement['prefix']} prefix: {case_id}")
+    if len(case_ids) < 8:
+        errors.append(f"{skill}: semantic specialist evals require at least 8 cases")
+
 readme = root / "README.md"
 if not readme.exists() or f"v{expected_version}" not in readme.read_text(encoding="utf-8"):
     errors.append(f"README.md must declare stable version v{expected_version}")
@@ -281,6 +317,70 @@ if not readme.exists() or "hugo2lee/engineering-philosophy" not in readme.read_t
 changelog = root / "CHANGELOG.md"
 if not changelog.exists() or f"## v{expected_version} -" not in changelog.read_text(encoding="utf-8"):
     errors.append(f"CHANGELOG.md must contain the v{expected_version} release heading")
+if not changelog.exists() or "Added the C++ boundary realization reference under `architecture-boundaries` without creating a C++ top-level Skill." not in changelog.read_text(encoding="utf-8"):
+    errors.append("CHANGELOG.md must preserve the released v0.2.0 C++ reference entry")
+
+architecture_skill = root / "skills" / "architecture-boundaries" / "SKILL.md"
+cpp_reference = root / "skills" / "architecture-boundaries" / "references" / "languages" / "cpp.md"
+if not cpp_reference.exists():
+    errors.append("architecture-boundaries is missing references/languages/cpp.md")
+elif not architecture_skill.exists() or "references/languages/cpp.md" not in architecture_skill.read_text(encoding="utf-8"):
+    errors.append("architecture-boundaries SKILL.md must link references/languages/cpp.md")
+
+lifecycle_documents = (
+    (root / "README.md", "Release Behavior Baseline", "Change Review / Gate 3"),
+    (root / "skills" / "engineering-philosophy" / "SKILL.md", "Release Behavior Baseline", "Change Review / Gate 3"),
+    (root / "skills" / "engineering-philosophy" / "references" / "feature-change-lifecycle.md", "Release Behavior Baseline", "Change Review / Gate 3"),
+)
+for document, baseline_marker, review_marker in lifecycle_documents:
+    if not document.exists():
+        errors.append(f"lifecycle document is missing: {document.relative_to(root)}")
+        continue
+    text = document.read_text(encoding="utf-8")
+    baseline_position = text.find(baseline_marker)
+    review_position = text.find(review_marker)
+    if baseline_position < 0 or review_position < 0 or baseline_position > review_position:
+        errors.append(f"{document.relative_to(root)} must establish {baseline_marker} before {review_marker}")
+
+lifecycle_order = (
+    "User Request",
+    "Requirement Clarification",
+    "Requirement Reconciliation",
+    "User Decision Gate",
+    "Approved Requirement Contract",
+    "Repository Analysis",
+    "Business Change / Impact Analysis",
+    "Architecture Pressure Analysis",
+    "Conditional architecture-boundaries / ddd-lite routing",
+    "Implementation Plan",
+    "Incremental Implementation",
+    "TDD / Focused Verification",
+    "Release Behavior Baseline",
+    "Change Review / Gate 3",
+    "CI / Artifact / Release Verification / Gate 4",
+    "Version / Tag / Release",
+)
+for document in (
+    root / "README.md",
+    root / "skills" / "engineering-philosophy" / "SKILL.md",
+    root / "skills" / "engineering-philosophy" / "references" / "feature-change-lifecycle.md",
+):
+    if not document.exists():
+        continue
+    text = document.read_text(encoding="utf-8")
+    positions = [text.find(marker) for marker in lifecycle_order]
+    if any(position < 0 for position in positions):
+        missing = [marker for marker, position in zip(lifecycle_order, positions) if position < 0]
+        errors.append(f"{document.relative_to(root)} is missing lifecycle markers {missing}")
+    elif positions != sorted(positions):
+        errors.append(f"{document.relative_to(root)} lifecycle markers are out of order")
+
+review_skill = root / "skills" / "code-review-and-quality" / "SKILL.md"
+if not review_skill.exists() or "applicable Release Behavior Baselines" not in review_skill.read_text(encoding="utf-8"):
+    errors.append("code-review-and-quality must require applicable Release Behavior Baselines before Gate 3")
+record_template = root / "skills" / "engineering-philosophy" / "references" / "feature-change-record.md"
+if not record_template.exists() or "## Change Review / Gate 3" not in record_template.read_text(encoding="utf-8"):
+    errors.append("Feature Change Record must include a Change Review / Gate 3 section")
 
 version_value = (root / "VERSION").read_text(encoding="utf-8").strip() if (root / "VERSION").exists() else ""
 if version_value != expected_version:

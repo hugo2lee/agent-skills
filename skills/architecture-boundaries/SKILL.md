@@ -104,7 +104,7 @@ Reject these unless unusually strong evidence exists:
 - a complete platform built before one business slice proves its need;
 - a Rule Engine created only because the word “rule” appeared in a request.
 
-Read [hexagonal.md](references/hexagonal.md) for port and adapter terminology, [testing-seams.md](references/testing-seams.md) for verification boundaries, [architecture-pressure-and-enablers.md](references/architecture-pressure-and-enablers.md) for derived requirements, and [languages/go.md](references/languages/go.md) for the first-version Go package and constructor guidance.
+Read [hexagonal.md](references/hexagonal.md) for port and adapter terminology, [testing-seams.md](references/testing-seams.md) for verification boundaries, [architecture-pressure-and-enablers.md](references/architecture-pressure-and-enablers.md) for derived requirements, [languages/go.md](references/languages/go.md) for Go package and constructor guidance, and [languages/cpp.md](references/languages/cpp.md) when applying the same decisions in C++.
 
 ## Verification
 

@@ -9,12 +9,20 @@ The record is a traceability artifact, not a second implementation plan. Keep it
 ```markdown
 # <Feature name>
 
-## Request
+## Requirement Clarification
 - Problem:
 - Desired outcome:
 - Requester and date:
+- Known constraints and open questions:
 
-## Requirement Contract
+## Requirement Reconciliation
+- Existing requirements:
+- Existing implemented capabilities:
+- Existing contracts and released behavior:
+- Classification: New | Overlap | Duplicate | Compatible Extension | Conflict | Replacement
+- Conflicts and user decisions:
+
+## Approved Requirement Contract
 - Goal:
 - Inputs:
 - Outputs:
@@ -24,13 +32,6 @@ The record is a traceability artifact, not a second implementation plan. Keep it
 - Acceptance criteria:
 - Non-goals:
 
-## Requirement Reconciliation
-- Existing requirements:
-- Existing implemented capabilities:
-- Existing contracts and released behavior:
-- Classification: New | Overlap | Duplicate | Compatible Extension | Conflict | Replacement
-- Conflicts and user decisions:
-
 ## Repository Analysis
 - Entry points and callers:
 - Relevant services, domain objects, adapters, persistence, and tests:
@@ -38,7 +39,7 @@ The record is a traceability artifact, not a second implementation plan. Keep it
 - Automation and release paths:
 - Evidence links or commands:
 
-## Change Analysis
+## Business Change / Impact Analysis
 - Business change:
 - Demonstrated change pressure:
 - Derived architectural requirement:
@@ -56,7 +57,7 @@ The record is a traceability artifact, not a second implementation plan. Keep it
 - Risks and checkpoints:
 - Verification commands:
 
-## Implementation & Discovery Notes
+## Incremental Implementation / Discovery Notes
 - Implemented slices:
 - Plan deviations and why:
 - New evidence or unresolved uncertainty:
@@ -78,6 +79,14 @@ The record is a traceability artifact, not a second implementation plan. Keep it
 ### Inbound Mapping Baseline
 - Transport-to-command mapping:
 - Result/error-to-transport mapping:
+
+## Change Review / Gate 3
+- Implementation runnable:
+- Relevant behavior tests green:
+- Applicable release baselines established:
+- Requirement or plan deviations recorded:
+- Feature Change Record updated when applicable:
+- Review findings, severity, evidence, residual risk, and explicit follow-up:
 
 ## Verification
 - Unit and behavior tests:
