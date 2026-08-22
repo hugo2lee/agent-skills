@@ -17,9 +17,6 @@ artifacts:
     status: active
     scope: project
     owner: example-team
-    ownership:
-      owner: example-team
-      team: example-team
     provenance:
       canonical_sources:
         - api/example.proto
@@ -46,6 +43,12 @@ commands, but their status must make that limitation visible.
 Organization and global scope require a reviewed, approved `promotion` record
 with evidence references. Project scope is the default and does not need
 promotion evidence.
+
+`owner` identifies the maintenance responsibility and `scope` identifies the
+lifecycle or promotion scope. The registry has one canonical owner/scope
+representation: both fields are top-level artifact properties. It must not
+duplicate them in a nested `ownership` object. A generated Skill sidecar uses
+a separate contract and may retain its structured `ownership` object.
 
 ## Registry versus projection
 

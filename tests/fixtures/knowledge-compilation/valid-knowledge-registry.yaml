@@ -6,10 +6,6 @@ artifacts:
     status: active
     scope: project
     owner: example-team
-    ownership:
-      owner: example-team
-      team: example-team
-      scope: project
     provenance:
       commit: abc123
     verification:

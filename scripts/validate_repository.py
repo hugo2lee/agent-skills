@@ -435,10 +435,27 @@ class RepositoryValidator:
         registry_schema = schemas.get("knowledge registry")
         registry_fixture = self.root / "tests/fixtures/knowledge-compilation/valid-knowledge-registry.yaml"
         if registry_schema:
+            artifact_schema = registry_schema.get("$defs", {}).get("artifact", {})
+            artifact_properties = artifact_schema.get("properties", {})
+            artifact_required = set(artifact_schema.get("required", []))
+            if not isinstance(artifact_properties, dict):
+                self.error("knowledge-registry schema artifact properties must be an object")
+            else:
+                if "ownership" in artifact_properties:
+                    self.error("knowledge-registry schema must not duplicate owner/scope in ownership")
+                for field in ("owner", "scope"):
+                    if field not in artifact_properties or field not in artifact_required:
+                        self.error(f"knowledge-registry schema must require top-level {field}")
+
+        if registry_schema:
             instance = self.load_yaml(registry_fixture)
             if instance is not None:
                 self.assert_valid(registry_schema, instance, registry_fixture)
         record_schema = schemas.get("generated Skill record")
+        if record_schema:
+            record_properties = record_schema.get("properties", {})
+            if not isinstance(record_properties, dict) or "ownership" not in record_properties:
+                self.error("generated Skill record schema must retain structured ownership")
         record_fixture = self.root / "tests/fixtures/knowledge-compilation/valid-generated-skill-record.yaml"
         if record_schema:
             instance = self.load_yaml(record_fixture)
