@@ -2,10 +2,9 @@
 
 Evidence-driven software engineering philosophy for AI-assisted development.
 
-当前开发版本：**v0.4.0 — Continuous Knowledge Compilation**
+当前稳定版本：**v0.4.0 — Continuous Knowledge Compilation**
 
-v0.3.0 的稳定发布仍然是 **Evidence-Driven Feature Lifecycle**；v0.4.0
-在未发布的功能分支上定义持续知识编译协议。
+v0.4.0 定义持续知识编译协议，并在完整验证、master CI 和发布门禁通过后作为稳定版本发布。
 
 这是一个可独立触发、独立维护、独立评测的通用软件工程方法论 Skill Suite。它帮助 Codex、Cline、OpenClaw 以及其他兼容 Agent Skills 规范的 Agent，在需求澄清、仓库分析、架构演化、实现、评审和发布之间保持可追溯的工程判断。
 
@@ -249,7 +248,7 @@ GitHub Actions 会在 push 和 pull request 上自动运行 validation、ShellCh
 
 ## Releases
 
-v0.4.0 is the current development release on the feature branch; v0.3.0 remains the current stable release:
+v0.4.0 is the current stable release:
 
 ```text
 v0.4.0 — Continuous Knowledge Compilation
