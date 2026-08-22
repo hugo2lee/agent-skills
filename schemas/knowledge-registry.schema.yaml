@@ -1,0 +1,66 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: Knowledge Registry
+type: object
+required:
+  - schema_version
+  - artifacts
+properties:
+  schema_version:
+    type: string
+    const: "1"
+  artifacts:
+    type: array
+    items:
+      type: object
+      required:
+        - id
+        - path
+        - type
+        - status
+        - scope
+        - provenance
+      properties:
+        id:
+          type: string
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        path:
+          type: string
+          minLength: 1
+        type:
+          enum:
+            - source
+            - reference
+            - evidence
+            - decision
+            - generated
+            - skill
+        status:
+          enum:
+            - draft
+            - active
+            - candidate
+            - deprecated
+            - archived
+            - unverified
+            - stale
+        scope:
+          enum:
+            - project
+            - organization
+            - global
+        provenance:
+          type: object
+          required:
+            - canonical_sources
+          properties:
+            canonical_sources:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            commit:
+              type: string
+        related_skills:
+          type: array
+          items:
+            type: string

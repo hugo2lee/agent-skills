@@ -423,3 +423,62 @@
   forbidden:
     - systematic-debugging
     - git-workflow-and-versioning
+
+- id: ROUTE-EN-033
+  language: en
+  prompt: >
+    New repository docs and generated outputs should update the Agent knowledge registry.
+    Classify the artifacts, preserve provenance, and decide whether an existing Skill
+    or a new candidate owns the task.
+  expected_primary:
+    - knowledge-compilation
+  allowed_secondary: []
+  forbidden:
+    - test-driven-development
+    - git-workflow-and-versioning
+
+- id: ROUTE-ZH-015
+  language: zh
+  prompt: >
+    新增一份 API reference，但已有 development Skill 已覆盖该任务。请分类、更新 provenance，
+    不要因为新增文件就创建重复 Skill。
+  expected_primary:
+    - knowledge-compilation
+  allowed_secondary: []
+  forbidden:
+    - ddd-lite
+    - architecture-boundaries
+
+- id: ROUTE-MIX-034
+  language: mixed
+  prompt: >
+    这个 project rule may be useful across repositories，先检查 provenance、independent evidence
+    and promotion gates，不要自动写成 global MUST。
+  expected_primary:
+    - engineering-philosophy
+  allowed_secondary:
+    - knowledge-compilation
+  forbidden:
+    - ci-cd-and-automation
+
+- id: ROUTE-EN-035
+  language: en
+  prompt: >
+    Design a CI gate that discovers repository knowledge changes, validates generated
+    metadata and redaction, preserves failure evidence, and prevents compiler loops.
+  expected_primary:
+    - ci-cd-and-automation
+  allowed_secondary:
+    - knowledge-compilation
+  forbidden:
+    - git-workflow-and-versioning
+
+- id: ROUTE-ZH-016
+  language: zh
+  prompt: >
+    现在只是普通功能实现，用户没有要求维护 Agent 知识，也没有新增文档治理问题。
+    请不要仅因仓库存在 Skill 就触发 knowledge-compilation。
+  expected_primary: []
+  allowed_secondary: []
+  forbidden:
+    - knowledge-compilation

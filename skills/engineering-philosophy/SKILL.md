@@ -3,7 +3,7 @@ name: engineering-philosophy
 description: Govern evidence-driven feature changes, reconcile requirements with released behavior, route decisions to the smallest focused Skill, and keep global principles separate from project rules. Use as an explicit governance entrypoint, not as a mandatory prelude for every task.
 license: AGPL-3.0-only
 metadata:
-  version: "0.3.0"
+  version: "0.4.0"
   category: "engineering-governance"
 ---
 
@@ -17,6 +17,7 @@ Use this Skill as an explicit governance and routing entrypoint when:
 - it is unclear which specialist Skill owns the main decision;
 - a new requirement may conflict with existing capability or released behavior;
 - a project rule may be mistaken for a global engineering principle; or
+- repository evidence should be reconciled into maintained Agent knowledge or a project/global promotion decision; or
 - the process should be lighter or heavier based on risk.
 
 Ordinary architecture, domain, testing, debugging, review, Git, and CI requests should go directly to their specialist. Do not turn the lifecycle into mandatory paperwork for a typo, an obvious safe edit, or a small configuration change.
@@ -97,7 +98,7 @@ The four gates protect decisions, not paperwork:
 - **Gate 3 — Ready for Review**: the implementation is runnable, relevant behavior tests are green, applicable Release Behavior Baselines have been established, requirement/plan deviations are recorded, and the Feature Change Record is updated when applicable. Only then is the change reviewed against the approved contract.
 - **Gate 4 — Ready for Release**: review, applicable baselines, integration checks, CI, Feature Change Record, and traceability are complete.
 
-Read [feature-change-lifecycle.md](references/feature-change-lifecycle.md) for the detailed lifecycle and gates. Use [feature-change-record.md](references/feature-change-record.md) for the project-level record when the change justifies one.
+Read [feature-change-lifecycle.md](references/feature-change-lifecycle.md) for the detailed lifecycle and gates. Use [feature-change-record.md](references/feature-change-record.md) for the project-level record when the change justifies one. Route repository knowledge evolution to [knowledge-compilation](../knowledge-compilation/SKILL.md), which owns artifact classification, provenance, reconciliation, candidate activation, and retirement.
 
 ## Requirement decisions
 
@@ -132,18 +133,24 @@ Select the smallest set of Skills needed for the current decision:
 - requirement/plan/diff/baseline consistency → `code-review-and-quality`;
 - history and release traceability → `git-workflow-and-versioning`;
 - quality gates and release verification → `ci-cd-and-automation`.
+- repository evidence that should update Agent knowledge → `knowledge-compilation`;
+- project-to-global rule promotion → keep `engineering-philosophy` primary and use `knowledge-compilation` for provenance and eval evidence.
 
 Use [routing-matrix.md](references/routing-matrix.md) for primary ownership, secondary collaboration, forbidden routing, and escalation conditions. The matrix is a decision aid, not a mandatory full workflow.
 
 ## Rule promotion
 
-Do not promote an isolated workaround into global doctrine. Follow:
+Do not promote an isolated workaround or project-generated Skill into global doctrine. Follow:
 
 ```text
 Observation → Repeated Pattern → Candidate Rule → Eval Case → Real-project Validation → Global Rule
 ```
 
 A rule may be promoted when the same pattern appears in two independent projects, a high-cost incident yields a general safeguard, or repeated reviews identify the same failure mode. Otherwise keep it as a project rule, ADR, or observation note.
+
+Knowledge compilation uses the same boundary: generation defaults to project
+scope, activation is gated, and project-to-global promotion is never an
+automatic side effect.
 
 Read [rule-lifecycle.md](references/rule-lifecycle.md) when changing the philosophy or promoting a rule. Read [global-vs-project.md](references/global-vs-project.md) when deciding where a rule belongs.
 

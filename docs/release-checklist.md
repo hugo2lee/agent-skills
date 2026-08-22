@@ -2,7 +2,22 @@
 
 Use this checklist for a versioned Skill Suite release. The repository is distributed as source through `npx skills`; it is not an npm package.
 
-## v0.3.0 scope
+## v0.4.0 scope
+
+- [ ] Confirm the working tree is clean of unrelated user changes and keep Phase 1 separate from any project-specific implementation.
+- [ ] Keep exactly 12 active top-level Skills, with the intended published surface recorded in `skills/registry.yaml`.
+- [ ] Confirm `VERSION` is `0.4.0` and all Skill metadata, registry entries, README, and CHANGELOG versions agree.
+- [ ] Confirm `knowledge-compilation` is the single new top-level Skill; do not split knowledge governance into adjacent duplicate Skills.
+- [ ] Confirm Source, Reference, Evidence, Decision, Generated Artifact, and Skill classification is documented.
+- [ ] Confirm provenance, canonical-source precedence, conflict surfacing, redaction, write scope, and project/global promotion gates are documented.
+- [ ] Confirm candidate, active, deprecated, and archived lifecycle semantics are documented and generation is not activation.
+- [ ] Confirm `skills/registry.yaml` and the filesystem Skill set agree, with no fixed 12-name validator list.
+- [ ] Add or update specialist routing cases and at least 8 `knowledge-compilation` cases plus 30 knowledge lifecycle cases.
+- [ ] Confirm `engineering-philosophy` contains no project-specific paths, facts, credentials, or local project rules.
+- [ ] Do not create a universal crawler, bot, RAG platform, automatic global promotion, or project-specific executor in v0.4.0.
+- [ ] Do not create the v0.4.0 tag or GitHub Release until the feature branch is approved and all gates pass.
+
+## Historical v0.3.0 scope
 
 - [ ] Confirm the working tree and isolate unrelated user changes.
 - [ ] Keep exactly 11 top-level Skills.
@@ -34,11 +49,11 @@ Use this checklist for a versioned Skill Suite release. The repository is distri
 ## Validation
 
 - [ ] Install PyYAML and the `skills-ref` reference validator.
-- [ ] Run `scripts/validate.sh`; confirm all 11 Skills, metadata, references, routing, lifecycle evals, and version consistency pass.
+- [ ] Run `scripts/validate.sh`; confirm the registry-discovered Skill set, metadata, references, routing, lifecycle evals, and version consistency pass.
 - [ ] Run `shellcheck scripts/*.sh`.
 - [ ] Run `bash -n scripts/*.sh`.
 - [ ] Run `git diff --check`.
-- [ ] Run `scripts/smoke-test-npx.sh` with a temporary HOME; confirm all 11 Skills are discovered and installed without stale renamed directories.
+- [ ] Run `scripts/smoke-test-npx.sh` with a temporary HOME; confirm every registry Skill is discovered and installed without stale renamed directories.
 - [ ] Run `scripts/deploy.sh --dry-run` with temporary roots; confirm there are no writes.
 - [ ] Run a real temporary-root deployment and repeat it to verify idempotence.
 - [ ] Create an unmanaged same-named target directory and confirm deployment stops without `--force`; test explicit `--force` takeover only in a temporary root.
@@ -78,7 +93,7 @@ git push origin v0.3.0
 ## After release
 
 - [ ] Run `npx skills@latest add hugo2lee/engineering-philosophy --list` against the public repository.
-- [ ] In a temporary HOME, run the global installation command and verify all 11 expected `SKILL.md` files.
+- [ ] In a temporary HOME, run the global installation command and verify every registry Skill has an expected `SKILL.md` file.
 - [ ] Run `npx skills@latest ls -g` and confirm the renamed Skills are present and the old names are absent.
 - [ ] Check the GitHub Actions workflow for the tag/commit and record any external-service failure separately from Skill validation.
 - [ ] If post-release behavior contradicts a routing or philosophy rule, record an observation and add an eval before promoting a global rule.

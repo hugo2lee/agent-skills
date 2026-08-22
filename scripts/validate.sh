@@ -7,26 +7,21 @@ if [[ ! -x "$PYTHON_BIN" ]]; then
   PYTHON_BIN="python3"
 fi
 
-SKILLS=(
-  engineering-philosophy
-  requirement-engineering
-  change-planning
-  architecture-boundaries
-  ddd-lite
-  incremental-implementation
-  test-driven-development
-  systematic-debugging
-  code-review-and-quality
-  git-workflow-and-versioning
-  ci-cd-and-automation
-)
-
 failures=0
 
 fail() {
   printf 'ERROR: %s\n' "$*" >&2
   failures=$((failures + 1))
 }
+
+REGISTRY_FILE="$ROOT_DIR/skills/registry.yaml"
+SKILLS=()
+while IFS= read -r skill; do
+  SKILLS+=("$skill")
+done < <(find "$ROOT_DIR/skills" -mindepth 2 -maxdepth 2 -type f -name SKILL.md -print | sed -E 's#^.*/skills/##; s#/SKILL[.]md$##' | sort)
+if (( ${#SKILLS[@]} == 0 )); then
+  fail "no top-level Skills discovered under $ROOT_DIR/skills"
+fi
 
 VERSION_FILE="$ROOT_DIR/VERSION"
 VERSION=""
@@ -96,10 +91,6 @@ for skill in "${SKILLS[@]}"; do
     grep -q "^  short_description: " "$metadata" || fail "$skill metadata has no short_description"
     grep -q "^  default_prompt: " "$metadata" || fail "$skill metadata has no default_prompt"
     grep -Fq "\$$skill" "$metadata" || fail "$skill default_prompt does not mention \$$skill"
-    expected_policy="true"
-    [[ "$skill" == "engineering-philosophy" ]] && expected_policy="false"
-    grep -q "^  allow_implicit_invocation: $expected_policy$" "$metadata" || \
-      fail "$skill invocation policy must allow_implicit_invocation: $expected_policy"
   fi
 
   if [[ -n "$STANDARDS_VALIDATOR" && -f "$skill_md" ]]; then
@@ -120,7 +111,7 @@ for skill in "${SKILLS[@]}"; do
 done
 
 if command -v "$PYTHON_BIN" >/dev/null 2>&1; then
-  if ! "$PYTHON_BIN" - "$ROOT_DIR" "$VERSION" "${SKILLS[@]}" <<'PY'
+  if ! "$PYTHON_BIN" - "$ROOT_DIR" "$VERSION" "$REGISTRY_FILE" "${SKILLS[@]}" <<'PY'
 import os
 import re
 import sys
@@ -135,7 +126,8 @@ except ImportError as exc:
 
 root = Path(sys.argv[1])
 expected_version = sys.argv[2]
-skills = sys.argv[3:]
+registry_path = Path(sys.argv[3])
+skills = sys.argv[4:]
 skill_names = set(skills)
 errors = []
 
@@ -192,6 +184,59 @@ if discovered != sorted(skills):
 if len(discovered) != len(set(discovered)):
     errors.append("skills/: duplicate Skill directory names detected")
 
+allowed_statuses = {"active", "candidate", "deprecated", "archived"}
+allowed_scopes = {"project", "organization", "global"}
+registry_by_name = {}
+if not registry_path.exists():
+    errors.append("skills/registry.yaml is missing")
+else:
+    try:
+        registry_data = yaml.safe_load(registry_path.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError as exc:
+        errors.append(f"{registry_path.relative_to(root)}: invalid YAML: {exc}")
+        registry_data = {}
+    if registry_data.get("schema_version") != "1":
+        errors.append("skills/registry.yaml must declare schema_version 1")
+    registry_entries = registry_data.get("skills", [])
+    if not isinstance(registry_entries, list):
+        errors.append("skills/registry.yaml: skills must be a list")
+        registry_entries = []
+    for entry in registry_entries:
+        if not isinstance(entry, dict):
+            errors.append("skills/registry.yaml: every Skill entry must be a mapping")
+            continue
+        name = entry.get("name")
+        if not isinstance(name, str) or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name):
+            errors.append(f"skills/registry.yaml: invalid Skill name {name!r}")
+            continue
+        if name in registry_by_name:
+            errors.append(f"skills/registry.yaml: duplicate Skill name {name}")
+            continue
+        status = entry.get("status")
+        if status not in allowed_statuses:
+            errors.append(f"skills/registry.yaml: invalid lifecycle status for {name}: {status!r}")
+        if entry.get("scope") not in allowed_scopes:
+            errors.append(f"skills/registry.yaml: invalid scope for {name}: {entry.get('scope')!r}")
+        if str(entry.get("version")) != expected_version:
+            errors.append(f"skills/registry.yaml: {name} version must be {expected_version}")
+        if not isinstance(entry.get("allow_implicit_invocation"), bool):
+            errors.append(f"skills/registry.yaml: {name} allow_implicit_invocation must be boolean")
+        if not isinstance(entry.get("minimum_eval_cases"), int) or entry["minimum_eval_cases"] < 5:
+            errors.append(f"skills/registry.yaml: {name} minimum_eval_cases must be an integer >= 5")
+        registry_by_name[name] = entry
+    registry_active = sorted(name for name, entry in registry_by_name.items() if entry.get("status") == "active")
+    if registry_active != sorted(discovered):
+        errors.append(f"skills/registry.yaml active set does not match skills/: {registry_active} vs {discovered}")
+for schema_name in ("knowledge-registry.schema.yaml", "generated-skill-metadata.schema.yaml"):
+    schema_path = root / "schemas" / schema_name
+    if not schema_path.exists():
+        errors.append(f"schemas/{schema_name} is missing")
+    else:
+        try:
+            yaml.safe_load(schema_path.read_text(encoding="utf-8"))
+        except yaml.YAMLError as exc:
+            errors.append(f"schemas/{schema_name}: invalid YAML: {exc}")
+
 old_skill_names = {"spec-driven-development", "planning-and-task-breakdown"}
 for old_name in old_skill_names:
     if (skill_dirs / old_name).exists():
@@ -199,15 +244,6 @@ for old_name in old_skill_names:
     if (root / "evals" / old_name).exists():
         errors.append(f"evals/: stale renamed eval directory remains: {old_name}")
 
-minimum_cases = {
-    "engineering-philosophy": 8,
-    "architecture-boundaries": 8,
-    "ddd-lite": 8,
-    "test-driven-development": 8,
-    "systematic-debugging": 8,
-    "requirement-engineering": 8,
-    "change-planning": 8,
-}
 global_eval_ids = {}
 
 for skill in skills:
@@ -215,6 +251,7 @@ for skill in skills:
     skill_md = skill_dir / "SKILL.md"
     metadata_path = skill_dir / "agents" / "openai.yaml"
     eval_dir = root / "evals" / skill
+    registry_entry = registry_by_name.get(skill)
 
     if skill_md.exists():
         properties = frontmatter(skill_md)
@@ -249,9 +286,9 @@ for skill in skills:
                 errors.append(f"{skill}: short_description must be 25-64 characters")
             if "$" + skill not in interface.get("default_prompt", ""):
                 errors.append(f"{skill}: default_prompt must mention " + "$" + skill)
-        expected_policy = skill != "engineering-philosophy"
+        expected_policy = registry_entry.get("allow_implicit_invocation") if registry_entry else None
         if not isinstance(policy, dict) or policy.get("allow_implicit_invocation") is not expected_policy:
-            errors.append(f"{skill}: allow_implicit_invocation must be {str(expected_policy).lower()}")
+            errors.append(f"{skill}: allow_implicit_invocation must match skills/registry.yaml")
 
     cases = eval_dir / "cases.md"
     expected = eval_dir / "expected.md"
@@ -270,7 +307,7 @@ for skill in skills:
                 errors.append(f"duplicate eval case ID {case_id}: {previous} and {skill}/cases.md")
             else:
                 global_eval_ids[case_id] = f"{skill}/cases.md"
-        minimum = minimum_cases.get(skill, 5)
+        minimum = registry_entry.get("minimum_eval_cases", 5) if registry_entry else 5
         if len(case_ids) < minimum:
             errors.append(f"{skill}: expected at least {minimum} eval cases, found {len(case_ids)}")
 
@@ -548,6 +585,60 @@ else:
     missing_categories = required_categories - lifecycle_categories
     if missing_categories:
         errors.append(f"lifecycle: missing required categories {sorted(missing_categories)}")
+
+knowledge_lifecycle_path = root / "evals" / "knowledge-lifecycle" / "cases.yaml"
+if not knowledge_lifecycle_path.exists():
+    errors.append("evals/knowledge-lifecycle/cases.yaml is missing")
+else:
+    try:
+        knowledge_lifecycle_cases = yaml.safe_load(knowledge_lifecycle_path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        errors.append(f"evals/knowledge-lifecycle/cases.yaml: invalid YAML: {exc}")
+        knowledge_lifecycle_cases = []
+    if not isinstance(knowledge_lifecycle_cases, list):
+        errors.append("evals/knowledge-lifecycle/cases.yaml: top level must be a list")
+        knowledge_lifecycle_cases = []
+    knowledge_required = {
+        "id", "category", "language", "prompt", "context", "expected_primary",
+        "allowed_secondary", "expected_decisions", "forbidden", "acceptance",
+    }
+    knowledge_seen = set()
+    for case in knowledge_lifecycle_cases:
+        if not isinstance(case, dict):
+            errors.append("knowledge lifecycle: every case must be a mapping")
+            continue
+        case_id = case.get("id", "<unknown>")
+        missing = knowledge_required - set(case)
+        if missing:
+            errors.append(f"knowledge lifecycle case {case_id}: missing {sorted(missing)}")
+            continue
+        if case_id in knowledge_seen:
+            errors.append(f"knowledge lifecycle: duplicate case ID {case_id}")
+        knowledge_seen.add(case_id)
+        previous = global_eval_ids.get(case_id)
+        if previous is not None:
+            errors.append(f"duplicate eval case ID {case_id}: {previous} and evals/knowledge-lifecycle/cases.yaml")
+        else:
+            global_eval_ids[case_id] = "evals/knowledge-lifecycle/cases.yaml"
+        if not isinstance(case_id, str) or not re.fullmatch(r"KLC-[0-9]{3}", case_id):
+            errors.append(f"knowledge lifecycle case {case_id}: ID must match KLC-NNN")
+        if case["language"] not in {"zh", "en", "mixed"}:
+            errors.append(f"knowledge lifecycle case {case_id}: language must be zh, en, or mixed")
+        for field in ("prompt", "context", "acceptance"):
+            if not isinstance(case[field], str) or not case[field].strip():
+                errors.append(f"knowledge lifecycle case {case_id}: {field} must be non-empty")
+        primary = case["expected_primary"]
+        if not isinstance(primary, str) or primary not in skill_names:
+            errors.append(f"knowledge lifecycle case {case_id}: expected_primary must be one Skill name")
+        validate_skill_list(case["allowed_secondary"], case_id, "allowed_secondary")
+        validate_skill_list(case["forbidden"], case_id, "forbidden")
+        if primary in case["forbidden"]:
+            errors.append(f"knowledge lifecycle case {case_id}: expected primary is also forbidden")
+        decisions = case["expected_decisions"]
+        if not isinstance(decisions, list) or not decisions or not all(isinstance(value, str) for value in decisions):
+            errors.append(f"knowledge lifecycle case {case_id}: expected_decisions must be a non-empty list of strings")
+    if len(knowledge_lifecycle_cases) < 30:
+        errors.append(f"knowledge lifecycle: expected at least 30 cases, found {len(knowledge_lifecycle_cases)}")
 
 # Old Skill names are allowed only in intentional migration/history prose. They
 # must not leak into active Skill instructions or executable routing data.

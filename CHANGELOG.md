@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+## v0.4.0 - Continuous Knowledge Compilation
+
+### Added
+
+- Added the `knowledge-compilation` Skill as the twelfth top-level Skill for repository evidence discovery, artifact classification, knowledge reconciliation, provenance, candidate/active lifecycle, registration, and retirement.
+- Added the generic Knowledge Compilation Lifecycle and the Source, Reference, Evidence, Decision, Generated Artifact, and Skill taxonomy.
+- Added candidate promotion, generated metadata, canonical-source precedence, redaction, project/global promotion, and registry contracts.
+- Added machine-validatable knowledge registry and generated Skill metadata schemas.
+- Added 12 knowledge-compilation specialist eval cases and 30 knowledge lifecycle eval cases covering owner reuse, Skill explosion, provenance, source conflicts, redaction, write scope, and project/global leakage.
+
+### Changed
+
+- Bumped all 12 Skill metadata versions to `0.4.0`.
+- Added `skills/registry.yaml` as the intended published Skill surface and changed validation/smoke discovery to derive the filesystem facts dynamically.
+- Extended engineering-philosophy routing for repository knowledge evolution while keeping ordinary feature work on its focused Skills.
+
+### Design intent
+
+v0.4.0 defines a project-neutral protocol for continuously turning repository evidence into governed, discoverable Agent knowledge. It does not implement a universal crawler, bot, RAG platform, automatic global promotion, or any project-specific executor.
+
 ## v0.3.0 - Evidence-Driven Feature Lifecycle
 
 ### Added

@@ -1,0 +1,361 @@
+- id: KLC-001
+  category: artifact-classification
+  language: en
+  prompt: A new API field guide points to an executable schema. Classify it and decide whether it needs a Skill.
+  context: The API schema and existing development Skill already cover the task.
+  expected_primary: knowledge-compilation
+  allowed_secondary: []
+  expected_decisions:
+    - Classify the guide as a Reference.
+    - Update the existing owner and provenance instead of creating a Skill.
+  forbidden: [ddd-lite, architecture-boundaries]
+  acceptance: The response registers the guide without Skill proliferation.
+- id: KLC-002
+  category: artifact-classification
+  language: zh
+  prompt: 新增一份单次故障报告，记录了超时、输入和日志。请判断它是规则、证据还是 Skill。
+  context: No repeated workflow or independent task boundary exists.
+  expected_primary: knowledge-compilation
+  allowed_secondary: []
+  expected_decisions:
+    - Classify it as Evidence.
+    - Do not promote it to a global MUST rule.
+  forbidden: [ddd-lite, test-driven-development]
+  acceptance: The response preserves evidence without creating a Skill.
+- id: KLC-003
+  category: generated-artifact
+  language: en
+  prompt: Generated API docs changed after a schema update. Record the source and regeneration command.
+  context: The generated docs are not the only design source.
+  expected_primary: knowledge-compilation
+  allowed_secondary: []
+  expected_decisions:
+    - Classify the docs as Generated Artifact.
+    - Record canonical source, commit, generator, and command.
+  forbidden: [ddd-lite]
+  acceptance: The response keeps generated output below its canonical source.
+- id: KLC-004
+  category: generated-artifact
+  language: zh
+  prompt: 生成文件与 proto 定义不一致。请说明哪一个是权威来源，以及如何处理冲突。
+  context: The proto file is the executable contract and the generated file is stale.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [systematic-debugging]
+  expected_decisions:
+    - Preserve the proto as canonical.
+    - Surface stale generated output and regenerate or investigate it.
+  forbidden: [ddd-lite]
+  acceptance: The response does not silently let generated text overwrite source.
+- id: KLC-005
+  category: existing-owner
+  language: mixed
+  prompt: A new runbook describes a task already owned by an active Skill. Should the compiler create another Skill?
+  context: The existing Skill has the same task signal and verification path.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [code-review-and-quality]
+  expected_decisions:
+    - Prefer updating the existing owner and provenance.
+    - Reject a duplicate Skill.
+  forbidden: [change-planning]
+  acceptance: The response chooses one clear knowledge owner.
+- id: KLC-006
+  category: candidate-gate
+  language: en
+  prompt: A proposed Skill has no canonical source and only two generic eval ideas. Decide its lifecycle state.
+  context: There is no repeated work evidence yet.
+  expected_primary: knowledge-compilation
+  allowed_secondary: []
+  expected_decisions:
+    - Keep it unactivated or reject it.
+    - Require source, boundary, and discriminating eval evidence.
+  forbidden: [test-driven-development]
+  acceptance: The response does not activate an unsupported Skill.
+- id: KLC-007
+  category: candidate-gate
+  language: zh
+  prompt: 一个新设备操作流程已经在五次变更中重复出现，有稳定触发信号，也能设计五个区分性 eval。请判断是否生成 candidate。
+  context: The workflow is project-specific and its source paths are known.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [ci-cd-and-automation]
+  expected_decisions:
+    - Check existing Skill coverage first.
+    - Generate a project-scoped candidate if no owner covers it.
+    - Keep activation behind provenance, redaction, and validation gates.
+  forbidden: [ddd-lite]
+  acceptance: The response distinguishes candidate generation from activation.
+- id: KLC-008
+  category: candidate-gate
+  language: en
+  prompt: Five documents describe one stable task but do not add a new task boundary. What should happen?
+  context: An existing Skill already owns the task.
+  expected_primary: knowledge-compilation
+  allowed_secondary: []
+  expected_decisions:
+    - Update or route the existing owner.
+    - Do not create a duplicate Skill because files repeat.
+  forbidden: [architecture-boundaries, ddd-lite]
+  acceptance: Repeated files are not treated as repeated work automatically.
+- id: KLC-009
+  category: provenance
+  language: zh
+  prompt: 自动生成的 Skill 只有摘要，没有 source paths、commit 或生成命令。可以激活吗？
+  context: The summary is plausible but cannot be traced to repository evidence.
+  expected_primary: knowledge-compilation
+  allowed_secondary: []
+  expected_decisions:
+    - Do not activate it.
+    - Require generated metadata and canonical provenance.
+  forbidden: [ci-cd-and-automation]
+  acceptance: Activation is blocked by missing provenance.
+- id: KLC-010
+  category: provenance
+  language: en
+  prompt: A project registry records a generated guide with source paths and a pinned commit. What else must be checked before activation?
+  context: The project has a valid reference and an independent verification command.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [code-review-and-quality]
+  expected_decisions:
+    - Check links, lifecycle status, evals, redaction, scope, and source validity.
+    - Ensure the generated output stays in the write allowlist.
+  forbidden: [ddd-lite]
+  acceptance: The response names objective activation gates.
+- id: KLC-011
+  category: redaction
+  language: en
+  prompt: A deployment log contains a password, an internal endpoint, and a device serial. How should compilation proceed?
+  context: The log is not intended for public or default Agent knowledge.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [ci-cd-and-automation]
+  expected_decisions:
+    - Block or redact secret-bearing material.
+    - Use explicit redaction markers without inventing values.
+  forbidden: [git-workflow-and-versioning]
+  acceptance: No secret or unique identifier is copied into generated output.
+- id: KLC-012
+  category: redaction
+  language: zh
+  prompt: 文档里出现生产 MQTT 凭据，但操作步骤本身可以保留。应如何生成 reference？
+  context: The safe procedural content can be separated from the credential.
+  expected_primary: knowledge-compilation
+  allowed_secondary: []
+  expected_decisions:
+    - Preserve only redacted procedural guidance.
+    - Reject the credential value and validate the result.
+  forbidden: [ddd-lite]
+  acceptance: The workflow remains useful without leaking credentials.
+- id: KLC-013
+  category: scope
+  language: en
+  prompt: A project guide contains a company-specific directory and device deployment rule. Can it become a global MUST automatically?
+  context: Evidence exists only in one repository.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [engineering-philosophy]
+  expected_decisions:
+    - Keep ownership at project scope.
+    - Require independent project evidence and review for global promotion.
+  forbidden: [architecture-boundaries]
+  acceptance: Project facts do not leak into global philosophy.
+- id: KLC-014
+  category: scope
+  language: mixed
+  prompt: 同一个 compiler 规则在两个独立项目重复出现。现在是否可以直接修改 global Skill？
+  context: The rule still needs a cross-project eval and removal of project-specific facts.
+  expected_primary: engineering-philosophy
+  allowed_secondary: [knowledge-compilation]
+  expected_decisions:
+    - Treat it as a promotion candidate.
+    - Run global review and eval before changing the published Skill.
+  forbidden: [ci-cd-and-automation]
+  acceptance: Repetition permits review, not silent global mutation.
+- id: KLC-015
+  category: conflict
+  language: en
+  prompt: A generated summary says retries are guaranteed, but the released contract does not promise retries. Reconcile it.
+  context: No authorized behavior change exists.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [requirement-engineering]
+  expected_decisions:
+    - Surface the conflict.
+    - Keep the released contract canonical until an authorized change is recorded.
+  forbidden: [test-driven-development]
+  acceptance: The response does not silently merge conflicting claims.
+- id: KLC-016
+  category: conflict
+  language: zh
+  prompt: 代码已经改成 B，但已发布 baseline 仍是 A，且没有用户授权。知识编译器能否直接把 registry 更新为 B？
+  context: The code and release behavior are materially different.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [systematic-debugging, requirement-engineering]
+  expected_decisions:
+    - Record the conflict and classify drift versus authorized change.
+    - Do not silently update the knowledge baseline.
+  forbidden: [git-workflow-and-versioning]
+  acceptance: The conflict remains visible until reconciled.
+- id: KLC-017
+  category: conflict
+  language: en
+  prompt: A new document contradicts an approved decision but cites no newer decision record. What is the next step?
+  context: The document may be stale or may reveal an unauthorized implementation change.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [requirement-engineering]
+  expected_decisions:
+    - Surface the contradiction.
+    - Inspect source, approval, and released behavior before choosing an owner.
+  forbidden: [ddd-lite]
+  acceptance: The response asks for evidence instead of silently preferring the newest file.
+- id: KLC-018
+  category: retirement
+  language: en
+  prompt: The canonical schema was renamed without semantic change. How should provenance be updated?
+  context: The rename can be verified from Git history and the replacement exists.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [git-workflow-and-versioning]
+  expected_decisions:
+    - Update the canonical path and retain the source revision relationship.
+    - Do not create a duplicate Skill or mark valid knowledge archived.
+  forbidden: [ddd-lite]
+  acceptance: Provenance follows a verified rename.
+- id: KLC-019
+  category: retirement
+  language: zh
+  prompt: active reference 的唯一 canonical source 被删除，替代文件还未验证。应标记为什么状态？
+  context: The dependent guide cannot currently be verified.
+  expected_primary: knowledge-compilation
+  allowed_secondary: []
+  expected_decisions:
+    - Mark it stale, unverified, or deprecated according to project lifecycle.
+    - Do not leave it active as if its source still existed.
+  forbidden: [test-driven-development]
+  acceptance: Missing source creates visible staleness.
+- id: KLC-020
+  category: retirement
+  language: en
+  prompt: An active Skill has a verified replacement and no remaining consumers. What lifecycle transition is appropriate?
+  context: The replacement covers the old task signal and migration evidence is recorded.
+  expected_primary: knowledge-compilation
+  allowed_secondary: []
+  expected_decisions:
+    - Mark the old Skill deprecated and then archived after the retention condition is met.
+    - Record the replacement relationship.
+  forbidden: [architecture-boundaries]
+  acceptance: Retirement is explicit and does not leave stale active routing.
+- id: KLC-021
+  category: registry
+  language: zh
+  prompt: registry 有一个 active artifact，但 context map 没有它。哪个是 machine source，应该怎么办？
+  context: The context map is intended as a human-readable projection.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [ci-cd-and-automation]
+  expected_decisions:
+    - Treat the registry as machine source.
+    - Fail synchronization or regenerate the projection.
+  forbidden: [ddd-lite]
+  acceptance: Registry and projection disagreement is surfaced.
+- id: KLC-022
+  category: registry
+  language: en
+  prompt: The filesystem contains a Skill directory that is absent from the published registry. What should validation report?
+  context: The directory is not explicitly unmanaged or external.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [code-review-and-quality]
+  expected_decisions:
+    - Report a registry/filesystem orphan.
+    - Require explicit registration or removal through the normal change process.
+  forbidden: [git-workflow-and-versioning]
+  acceptance: The validator rejects an unexplained published-surface mismatch.
+- id: KLC-023
+  category: write-boundary
+  language: en
+  prompt: The compiler wants to edit internal product source to make a generated Skill pass. Is this allowed?
+  context: The compiler write allowlist includes only knowledge, eval, registry, and compiler files.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [architecture-boundaries]
+  expected_decisions:
+    - Reject the product-source write.
+    - Report the required product change separately.
+  forbidden: [test-driven-development]
+  acceptance: Automation cannot mutate unrelated product source.
+- id: KLC-024
+  category: write-boundary
+  language: zh
+  prompt: 自动同步任务想修改 submodule 内的代码来补齐项目文档。应如何处理？
+  context: Submodule source is outside the project compiler's write scope.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [ci-cd-and-automation]
+  expected_decisions:
+    - Refuse the submodule write.
+    - Record the external contract or create a separate authorized change.
+  forbidden: [git-workflow-and-versioning]
+  acceptance: External source is represented without recursive mutation.
+- id: KLC-025
+  category: architecture-routing
+  language: en
+  prompt: Evidence shows repeated protocol translation defects while compiling a new project guide. Which specialist should collaborate?
+  context: The knowledge decision remains primary, but a technical boundary is now evidenced.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [architecture-boundaries]
+  expected_decisions:
+    - Keep knowledge classification as the primary decision.
+    - Route the demonstrated technical pressure to architecture-boundaries.
+  forbidden: [ddd-lite]
+  acceptance: Knowledge compilation does not replace technical boundary analysis.
+- id: KLC-026
+  category: domain-routing
+  language: zh
+  prompt: 新业务文档暴露了订单确认不变量。应由哪个 Skill 处理业务建模，同时保留知识编译职责？
+  context: The invariant is real and not merely a documentation layout concern.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [ddd-lite]
+  expected_decisions:
+    - Route invariant ownership to ddd-lite.
+    - Register the resulting decision and source provenance.
+  forbidden: [ci-cd-and-automation]
+  acceptance: Domain modeling and knowledge registration remain separate responsibilities.
+- id: KLC-027
+  category: eval-gate
+  language: en
+  prompt: A candidate Skill has five cases, but all five are near-duplicates and cannot distinguish neighboring Skills. Can it activate?
+  context: The count meets a numeric threshold but the evals are not discriminating.
+  expected_primary: knowledge-compilation
+  allowed_secondary: [code-review-and-quality]
+  expected_decisions:
+    - Keep it candidate or reject it.
+    - Require discriminating evals rather than counting superficial cases.
+  forbidden: [test-driven-development]
+  acceptance: Activation requires meaningful eval coverage, not only a number.
+- id: KLC-028
+  category: global-promotion
+  language: mixed
+  prompt: A farm-specific rule looks useful to everyone. Can the compiler add it as an engineering-philosophy MUST without review?
+  context: The evidence currently comes from one project and contains project paths.
+  expected_primary: engineering-philosophy
+  allowed_secondary: [knowledge-compilation]
+  expected_decisions:
+    - Keep it project-scoped.
+    - Require cross-project evidence, neutralization, evals, and promotion review.
+  forbidden: [ci-cd-and-automation]
+  acceptance: The global repository remains free of project facts and automatic promotion.
+- id: KLC-029
+  category: compiler-ci
+  language: en
+  prompt: A CI job should discover changes, synchronize registry projections, and validate generated knowledge. Which delivery Skill owns the gate?
+  context: The job must preserve logs, fail on unsafe output, and avoid loops.
+  expected_primary: ci-cd-and-automation
+  allowed_secondary: [knowledge-compilation]
+  expected_decisions:
+    - Define deterministic quality and artifact gates.
+    - Retain failure evidence and guard against compiler-triggered loops.
+  forbidden: [git-workflow-and-versioning]
+  acceptance: The response treats the compiler as a delivery gate with diagnostic evidence.
+- id: KLC-030
+  category: duplicate-prevention
+  language: zh
+  prompt: 两个不同文件名描述的是同一个稳定任务。是否应生成两个 Skill 以便 Agent 更容易找到？
+  context: The task signal, canonical source, and verification path are the same.
+  expected_primary: knowledge-compilation
+  allowed_secondary: []
+  expected_decisions:
+    - Prefer one existing knowledge owner.
+    - Merge or route references instead of creating duplicate Skills.
+  forbidden: [architecture-boundaries, ddd-lite]
+  acceptance: Different filenames do not create duplicate task owners.

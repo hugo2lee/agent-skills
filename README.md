@@ -2,7 +2,10 @@
 
 Evidence-driven software engineering philosophy for AI-assisted development.
 
-当前稳定版本：**v0.3.0 — Evidence-Driven Feature Lifecycle**
+当前开发版本：**v0.4.0 — Continuous Knowledge Compilation**
+
+v0.3.0 的稳定发布仍然是 **Evidence-Driven Feature Lifecycle**；v0.4.0
+在未发布的功能分支上定义持续知识编译协议。
 
 这是一个可独立触发、独立维护、独立评测的通用软件工程方法论 Skill Suite。它帮助 Codex、Cline、OpenClaw 以及其他兼容 Agent Skills 规范的 Agent，在需求澄清、仓库分析、架构演化、实现、评审和发布之间保持可追溯的工程判断。
 
@@ -14,7 +17,7 @@ Evidence-driven software engineering philosophy for AI-assisted development.
 
 > Prefer the simplest architecture that preserves meaningful boundaries.
 
-v0.3.0 将这条原则落实为六个判断：
+v0.4.0 延续 v0.3.0 的六个判断，并增加一条知识演进约束：
 
 1. 先澄清可观察行为，再讨论实现。
 2. 新需求必须与已发布行为、现有契约和当前能力对照，不能因为“新增”二字就重复实现。
@@ -22,6 +25,7 @@ v0.3.0 将这条原则落实为六个判断：
 4. 架构来自已证明的变更压力，而不是来自对未来可能性的想象。
 5. 业务变化与必要的架构 enabler 通过可运行的 vertical slice 一起演进。
 6. 已发布的重要行为冻结为可执行 baseline；未经授权不能悄悄削弱。
+7. 从仓库证据编译 Agent 知识，但生成不等于激活，项目经验也不自动晋升为全局规则。
 
 规则统一分为 `MUST`、`SHOULD` 和 `CONDITIONAL`。全局 Skill 不写入某个项目的 Go 版本、数据库、公司目录、分支策略、领域 Aggregate 或测试框架；这些属于项目规则、项目级 Skill 或 ADR。
 
@@ -57,6 +61,24 @@ User Request
 
 简单、明确、孤立的修改可以把证据保留在任务或提交中；跨边界、兼容性敏感或发布风险较高的功能，建议创建 `docs/changes/<feature-name>.md`。详细流程见 [Feature Change Lifecycle](skills/engineering-philosophy/references/feature-change-lifecycle.md)，记录模板见 [Feature Change Record](skills/engineering-philosophy/references/feature-change-record.md)。
 
+## Continuous Knowledge Compilation
+
+v0.4.0 定义第二条生命周期：当代码、文档、测试、构建、生成物或运维资料持续变化时，Agent 知识应当被发现、分类、对账、编译、验证、注册和退役。
+
+```text
+Repository Evidence
+  -> Discovery
+  -> Artifact Classification
+  -> Canonical Source / Provenance
+  -> Knowledge Reconciliation
+  -> Reference / Evidence / Decision / Generated Artifact / Skill Candidate
+  -> Validation & Redaction
+  -> Registration
+  -> Candidate / Active / Deprecated / Archived
+```
+
+这条流程不要求每个文件都生成 Skill。应优先更新已有知识 owner；重复工作才可能形成项目级 Skill candidate；任何 project-to-global promotion 都必须经过独立证据、eval 和审查。完整协议见 [$knowledge-compilation](skills/knowledge-compilation/SKILL.md) 及其 references。
+
 ## Quick Start
 
 普通用户使用 `npx skills` 从公开 GitHub 仓库安装，不需要发布 npm 包。当前公开仓库地址是 `hugo2lee/engineering-philosophy`：
@@ -90,9 +112,9 @@ npx skills@latest add hugo2lee/engineering-philosophy \
 
 原生 Agent 目录和 `npx skills` 的安装目标是两个概念。当前实测 `npx skills@latest` 在同时指定 `--agent codex --agent cline` 时使用共享的 `~/.agents/skills`，指定 OpenClaw 时使用 `~/.openclaw/skills`；`scripts/smoke-test-npx.sh` 有意验证这一 CLI 行为。维护者的 `scripts/deploy.sh` 是独立的复制部署辅助工具，默认按上面的原生目录分别写入，也可以通过参数传入临时目标。实际安装后请用 `npx skills ls -g` 和对应 Agent 文档确认最终路径。
 
-## The 11 Skills
+## The 12 Skills
 
-仓库保持恰好 11 个顶层 Skill。仓库是发布和验证边界，不是一个必须整体触发的巨大 Skill；每个目录都可以独立调用。
+仓库保持恰好 12 个顶层 Skill。仓库是发布和验证边界，不是一个必须整体触发的巨大 Skill；每个目录都可以独立调用。
 
 - `engineering-philosophy`：总纲、规则等级、全局/项目边界、生命周期和路由。显式入口，不作为所有请求的必经层。
 - `requirement-engineering`：Requirement Contract、现有需求/能力/发布行为对照、冲突分类和用户决策门。
@@ -105,8 +127,9 @@ npx skills@latest add hugo2lee/engineering-philosophy \
 - `code-review-and-quality`：Requirement Contract、Change Plan、diff、baseline 和验证证据的 Gate 3 审查。
 - `git-workflow-and-versioning`：分支、原子提交、版本、CHANGELOG、Tag 和发布可追溯性。
 - `ci-cd-and-automation`：测试/构建质量闸、artifact 身份、部署健康、停止/回滚和 Gate 4。
+- `knowledge-compilation`：仓库证据发现、artifact 分类、知识对账、provenance、Skill candidate、验证、注册和退役。它不替代普通功能开发、调试、评审或发布 Skill。
 
-首版和当前版本均不创建 C++ Skill；也不创建独立的安全、可观测性或 ADR Skill。代码示例和语言落地参考集中在 `architecture-boundaries` 下的 Go 与 C++ 参考文件中，不把项目版本或公司约束写进全局 Skill。
+v0.4.0 仍不创建 C++ Skill，也不创建独立的安全、可观测性或 ADR Skill。代码示例和语言落地参考集中在 `architecture-boundaries` 下的 Go 与 C++ 参考文件中，不把项目版本或公司约束写进全局 Skill。
 
 ## Requirement Reconciliation
 
@@ -168,12 +191,14 @@ Service 测试不能证明真实数据库 adapter；mock 的调用次数不能�
 | diff、PR/MR、Gate 3 | `code-review-and-quality` | 发现真实缺陷时转 debugging |
 | branch、commit、version、tag、CHANGELOG | `git-workflow-and-versioning` | 发布自动化时协作 CI/CD |
 | pipeline、artifact、部署健康、Gate 4 | `ci-cd-and-automation` | 失败时转 debugging |
+| 仓库变化需要更新 Agent 知识、分类 artifact、判断是否生成 Skill | `knowledge-compilation` | 发现技术边界时协作 architecture-boundaries；发现业务不变量时协作 ddd-lite |
+| 项目知识晋升为跨项目/全局规则 | `engineering-philosophy` | `knowledge-compilation` 提供 provenance 和 eval 证据 |
 
 完整的 primary、secondary、forbidden 和升级条件见 [routing-matrix.md](skills/engineering-philosophy/references/routing-matrix.md)。在 Codex 中可以显式调用，例如 `$architecture-boundaries`、`$ddd-lite`、`$requirement-engineering`；其他 Agent 可以根据 description 自动触发 specialist Skill。
 
 ## Migrating from v0.2.x
 
-v0.3.0 只重命名两个 Skill，保持总数为 11：
+v0.3.0 只重命名两个 Skill；v0.4.0 在此基础上新增 `knowledge-compilation`，总数为 12：
 
 | v0.2.x | v0.3.0 |
 | --- | --- |
@@ -208,7 +233,7 @@ scripts/deploy.sh --dry-run
 git diff --check
 ```
 
-验证器会读取根目录 `VERSION`，检查 11 个 Skill 的 frontmatter、`agents/openai.yaml`、metadata version、references 链接、独立 eval、routing eval、30 个 lifecycle cases 和文档版本一致性。PyYAML 与 Agent Skills reference validator 是验证依赖；例如：
+验证器会读取 `skills/registry.yaml`，动态发现并检查 12 个 Skill 的 frontmatter、`agents/openai.yaml`、metadata version、references 链接、独立 eval、routing eval、30 个 feature lifecycle cases、30 个 knowledge lifecycle cases、registry 一致性和文档版本一致性。PyYAML 与 Agent Skills reference validator 是验证依赖；例如：
 
 ```sh
 python3 -m venv .venv
@@ -220,10 +245,10 @@ GitHub Actions 会在 push 和 pull request 上自动运行 validation、ShellCh
 
 ## Releases
 
-v0.3.0 is the current stable release:
+v0.4.0 is the current development release on the feature branch; v0.3.0 remains the current stable release:
 
 ```text
-v0.3.0 — Evidence-Driven Feature Lifecycle
+v0.4.0 — Continuous Knowledge Compilation
 ```
 
 Stable releases use annotated `vMAJOR.MINOR.PATCH` tags. A pushed stable tag runs the repository validation workflow first, and the GitHub Release is published only after validation succeeds. The released `v0.1.0`, `v0.2.0`, and `v0.2.1` tags remain immutable.

@@ -2,19 +2,14 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd -P)"
-SKILLS=(
-  engineering-philosophy
-  requirement-engineering
-  change-planning
-  architecture-boundaries
-  ddd-lite
-  incremental-implementation
-  test-driven-development
-  systematic-debugging
-  code-review-and-quality
-  git-workflow-and-versioning
-  ci-cd-and-automation
-)
+SKILLS=()
+while IFS= read -r skill; do
+  SKILLS+=("$skill")
+done < <(find "$ROOT_DIR/skills" -mindepth 2 -maxdepth 2 -type f -name SKILL.md -print | sed -E 's#^.*/skills/##; s#/SKILL[.]md$##' | sort)
+if (( ${#SKILLS[@]} == 0 )); then
+  printf 'ERROR: no top-level Skills discovered under %s/skills.\n' "$ROOT_DIR" >&2
+  exit 1
+fi
 
 if ! command -v npx >/dev/null 2>&1; then
   printf 'ERROR: npx is required for the installation smoke test.\n' >&2
